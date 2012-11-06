@@ -47,6 +47,7 @@
 
 \newcommand{\nth}[1]{#1\(^\text{th}\)}
 \newcommand{\nthTwo}[2]{\(#1^\text{#2}\)}
+\newcommand{\ms}{\(\mu\)s}
 
 \ifpdf
 \usepackage[pdftex]{graphicx}
@@ -73,29 +74,41 @@
 	The \nth{5} MuSIC beamtime (\nth{18} to the \nthTwo{22}{nd} June 2012) was inteded to test the momentum distribution of the muons beam. Here we will discuss the strategy employed to analyse the data and the problems encountered.
 \end{abstract}
 
-\section{Experimental set-up}
+\section{Experimental set-up}\label{sec:set-up}
 The aim of MuSIC~5 was to measure the muon momentum distribution at the end of 36\(^{\circ}\) of beampipe. This measurement was made by counting muon decays between two counters (upstream and downstream) and using a degrader and stopping target to select muons of a given momentum. 
 
-By varying the degrader's thickness different regions of the muon momentum distribution could be removed whilst the stopping target limited the the maximum (average, degrader adjusted) momentum that would decay. The total effect of this combination was to select bands of muons of different average momentum. The distribution of momentums could then be inferred by counting the number of muon decays with the specific combination of degrader and stopping target.
+By varying the degrader's thickness different regions of the muon momentum distribution could be removed whilst the stopping target limited the the maximum (average, degrader adjusted) momentum that would decay. The total effect of this combination was to select bands of muons of different average momentum. The distribution of momentums could then be inferred by counting the number of muon decays with the specific combination of degrader and stopping target. 
 
-The upstream counter consisted of an array of 8 thin (1~mm) plastic scintillators whilst the downstream counter was 5 thicker (3.5~mm) scintillator both upstream and downstream counters were wrapped with mylar and black-wrap.
+To detect muons a counter placed upstream, and a second, downstream of the stopping target. The upstream counter consisted of an array of 8 thin (1~mm) plastic scintillators whilst the downstream counter was 5 thicker (3.5~mm) scintillators; all scintillators were individually wrapped with mylar and black-wrap. Read out was performed by MPPCs attached to either end of wavelength-shifting fibres mounted on the scintillators. Each MPPC was attached to a simple filter and had its voltage tuned to the specified value via a voltage divider. The signals from the MPPCs were amplified before being passed to the DAQ logic for digitisation (see section~\ref{sec:daq}).
 
-The counters were read out using MPPCs attached to either end of wavelength-shifting fibres mounted on the scintillators. Each MPPC was attached to a simple filter and had its voltage tuned to the specified value via a voltage divider. The signals from the MPPCs were amplified before being passed to the DAQ logic for digitisation.
+\section{Data Acquisition (DAQ)}\label{sec:daq}
+The first step in data acquisition (after amplification of the MPPC signal) was to check if the signal passed basic thresholds using a discriminator unit. The upstream counter had a threshold set to detect MIP (minimally ionising particle) muons while the downstream counters were set higher to account for the greater energy deposited in the thicker scintillator and to better detect electrons which deposit more energy as well. 
 
-\section{Data Acquisition (DAQ)}
-The trigger for the system was the detection of a muon in the upstream counter with nothing in the downstream counter i.e. that a muon had stopped in the stopping target. Once a trigger had been established all subsequent hits in either up or downstream counters were recorded on a Multi-TDC.
+The trigger was constructed using the discriminator output and consisted of the detection of a particle in the upstream counter with nothing detected in the downstream counter i.e. a stopping particle (hopefully a muon). If the rest of the system was busy the trigger would be vetoed otherwise it would be recorded. 
 
-In addition to TDC readings the amount of charge on each channel (summed over both MPPCs) at the time of trigger was 
+Once triggered a  20~\ms window was opened during which all subsequent signals that passed threshold were recorded in the Multi-TDC. In addition to TDC readings the amount of charge on each channel (summed over both MPPCs) at the time of trigger was recorded using an ADC.
 
-Several sets of data were taken with the main differnce between runs being the width of the degrader used (0, 0.5, 1 and 5~mm) although there were also other differences (for example the proton beam current). 
+Periodically throughout the data taking various scaler values were also recorded to check the status of the system.
 
-The data from the run ()
+Several sets of data were taken with the main differnce between runs being the width of the degrader used (0, 0.5, 1 and 5~mm) although there were also other differences (for example the proton beam current).
 
-\section{Simulation}
-\section{Framework}
-\section{Algorithm}
-\section{Results}
-\section{Conclusion}
+The data from each run was recorded and processed using the MIDAS system which produced output root files containing a tree for trigger data (`Trigger') and a tree for scaler data (`SCLR'). 
+
+\section{Simulation}\label{sec:simulation}
+The detector set up was simulated using Geant~4 and G4Beamline. G4Beamline was used for particle transport from proton injection to the end of the 36\(^{\circ}\) of beamline. Geant~4 was used to simulate the detector set up using the particles produced in G4Beamline as input.
+
+The simulation saves the details of all charged particles that pass through either of the two volumes that represent the counters. These details are then processed seperately to look for parent daughter pairs. The times at which these pairs are seen in the upstream and downstream counters are then used to create the equivalet of the Multi-TDC output in the real data.
+
+\section{Framework}\label{sec:framework}
+The analysis code uses two frameworks, in addition to the simulation, to process and store both simulated and real data. 
+
+The first system used is called `ROOT'; ROOT is a statistics package written in C++ that is used to create, fit and manage histograms as well as perform other statistical calculations. As well as normal compileable code ROOT also offers the option of using interpreted macros via CINT which can be compiled via the ROOT program. These macros are often used for simple processes that have long run times as efficiencies can be made in careful code construction.
+
+The second system is `pyROOT' this is a python wrapper to the ROOT libraries that allows the use of python constructs and language to control ROOT. Whilst not as fast as natively compiled C++ python is generally less verbose and the use of ROOTs compiled libraries minimises the cost. Python has several advantages over C++ that make it more attractive for larger systems. The major advantage is in-built support for more complex types such as dictionaries that allow more intelligent storage of data without resorting to full object orientated language. Python also supports much more intelligent and powerful processes (for example fast and simple iteration over the elements of a collection) that would overwise require many lines of boiler plate code in C++ or the use of many external libaries (or both). pyROOT is mainly used for the more complex, multi-layered analysis where speed of development is perferable to speed of execution.
+
+\section{Algorithm}\label{sec:algorithm}
+\section{Results}\label{sec:results}
+\section{Conclusion}\label{sec:conclusion}
 It's all fucked
 
 \bibliographystyle{plain}
