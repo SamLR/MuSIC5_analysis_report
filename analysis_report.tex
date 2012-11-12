@@ -74,59 +74,36 @@
 	The \nth{5} MuSIC beam-time (\nth{18} to the \nthTwo{22}{nd} June 2012) was intended to test the momentum distribution of the muons beam. Here we will discuss the strategy employed to analyse the data and the problems encountered.
 \end{abstract}
 
-\section{Experimental set-up}\label{sec:set-up}
-The aim of MuSIC~5 was to measure the muon momentum distribution at the end of 36\(^{\circ}\) of beam-pipe. This measurement was made by counting muon decays between two counters (upstream and downstream) and using a degrader and stopping target to select muons of a given momentum. 
+\section{Introduction} % (fold)
+\label{sec:introduction}
 
-By varying the degrader's thickness different regions of the muon momentum distribution could be removed whilst the stopping target limited the the maximum (average, degrader adjusted) momentum that would decay. The total effect of this combination was to select bands of muons of different average momentum. The distribution of momentums could then be inferred by counting the number of muon decays with the specific combination of degrader and stopping target. 
+% section introduction (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Run Data} % (fold)
+\label{sec:run_data}
 
-To detect muons a counter placed upstream, and a second, downstream of the stopping target. The upstream counter consisted of an array of 8 thin (1~mm) plastic scintillators whilst the downstream counter was 5 thicker (3.5~mm) scintillators; all scintillators were individually wrapped with mylar and black-wrap. Read out was performed by MPPCs attached to either end of wavelength-shifting fibres mounted on the scintillators. Each MPPC was attached to a simple filter and had its voltage tuned to the specified value via a voltage divider. The signals from the MPPCs were amplified before being passed to the DAQ logic for digitisation (see section~\ref{sec:daq}).
+% section run_data (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulated Data} % (fold)
+\label{sec:simulated_data}
 
-\section{Data Acquisition (DAQ)}\label{sec:daq}
-The first step in data acquisition (after amplification of the MPPC signal) was to check if the signal passed basic thresholds using a discriminator unit. The upstream counter had a threshold set to detect MIP (minimally ionising particle) muons while the downstream counters were set higher to account for the greater energy deposited in the thicker scintillator and to better detect electrons which deposit more energy as well. 
+% section simulated_data (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acceptance} % (fold)
+\label{sec:acceptance}
 
-The trigger was constructed using the discriminator output and consisted of the detection of a particle in the upstream counter with nothing detected in the downstream counter i.e. a stopping particle (hopefully a muon). If the rest of the system was busy the trigger would be vetoed otherwise it would be recorded. 
+% section acceptance (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fitting And Integration} % (fold)
+\label{sec:fitting_and_integration}
 
-Once triggered a  20~\ms{}  window was opened during which all subsequent signals that passed threshold were recorded in the Multi-TDC. In addition to TDC readings the amount of charge on each channel (summed over both MPPCs) at the time of trigger was recorded using an ADC.
+% section fitting_and_integration (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Muon Yield} % (fold)
+\label{sec:muon_yield}
 
-Periodically throughout the data taking various scaler values were also recorded to check the status of the system.
-
-Several sets of data were taken with the main differnce between runs being the width of the degrader used (0, 0.5, 1 and 5~mm) although there were also other differences (for example the proton beam current).
-
-The data from each run was recorded and processed using the MIDAS system which produced output root files containing a tree for trigger data (`Trigger') and a tree for scaler data (`SCLR'). 
-
-\section{Simulation}\label{sec:simulation}
-The detector set up was simulated using Geant~4 and G4Beamline. G4Beamline was used for particle transport from proton injection to the end of the 36$^{\circ}$ of beamline. Geant~4 was used to simulate the detector set up using the particles produced in G4Beamline as input.
-
-The simulation saves the details of all charged particles that pass through either of the two volumes that represent the counters. These details are then processed separately to look for parent daughter pairs. The times at which these pairs are seen in the upstream and downstream counters are then used to create the equivalent of the Multi-TDC output in the real data.
-
-\section{Framework}\label{sec:framework}
-The analysis code uses two frameworks, in addition to the simulation, to process and store both simulated and real data. 
-
-The first system used is called `ROOT'; ROOT is a statistics package written in C++ that is used to create, fit and manage histograms as well as perform other statistical calculations. As well as normal compile-able code ROOT also offers the option of using interpreted macros via CINT which can be compiled via the ROOT program. These macros are often used for simple processes that have long run times as efficiencies can be made in careful code construction.
-
-The second system is `pyROOT' this is a python wrapper to the ROOT libraries that allows the use of python constructs and language to control ROOT. Whilst not as fast as natively compiled C++ python is generally less verbose and the use of ROOTs compiled libraries minimises the cost. Python has several advantages over C++ that make it more attractive for larger systems. The major advantage is in-built support for more complex types such as dictionaries that allow more intelligent storage of data without resorting to full object orientated language. Python also supports much more intelligent and powerful processes (for example fast and simple iteration over the elements of a collection) that would otherwise require many lines of boiler plate code in C++ or the use of many external libraries (or both). pyROOT is mainly used for the more complex, multi-layered analysis where speed of development is preferable to speed of execution.
-
-\section{Algorithm}\label{sec:algorithm}
-The basic algorithm for counting the number of (decay) muons seen in any run is to fit an function to the times between seeing a trigger and subsequent hits in the downstream counter. This gives several useful bits of information: the lifetime of the decaying particles and the integral of the curve gives the number of decays observed. The actual algorithm is more complex but the core is this process of fitting and integration. 
-
-The first stage in the analysis is the creation histograms of the times recorded by the multi-TDC (i.e. with the trigger time, t0, subtracted). These histograms have 1ns width bins and upper and lower bounds of 0~ns and 20,000~ns respectively. Every entry for every channel in the trigger tree is then added to this histogram (the simulated data obviously only has one channel). 
-
-Once this histograms are created they are fitted with the function. 
-\begin{equation}\label{equ:fit}
-	N_{b} + N_{c}e^{\frac{-x}{\tau_{c}}} + N_{f}e^{\frac{-x}{\tau_{f}}}
-\end{equation}
-Where $N_{b}$ is the contribution of background events, $N_{c}$ and $\tau_{c}$ are the number of initial decays and lifetime of a muon in copper and $N_{f}$ and $\tau_{f}$ are the same parameters for free muons. The function is separated like this as the difference between muonic copper lifetime and free lifetime is large ($\sim$2~\ms)
-
-The fitting process has two sets of initial parameters: the fit settings and the initial fit parameters. The fit settings consist of the bin width (if it is to be changed from 1~ns) and the fit bounds (lower and higher). The initial fit parameters are the values to use as start points for the fit (obviously using 0 would not yield useful results).
-
-The fit settings have to balance two competing needs: first to preserve as much of the data's fidelity as possible and secondly to fit the data as accurately as possible. The three fitting parameters have different affects on this, the bin width has the largest affect but the fit range also plays its part. The bin width's primary affect is to smooth the data; a larger bin has a smaller statistical fluctuation but also reduces the fidelity of the data. The smoothing affect of the bin width is actually used to remove a $\sim$60~ns period oscillation seen in the data that's attributed to the cyclotron, this effectively becomes the minimum useable value. The main constraints on the fit range are the length of the window opened by the Trigger, setting the bounds to match that of the window mean fitting the maximum data, this is especially important for the lower bound (50~ns) as setting this too high can effectively remove the copper component for the fit ($\tau_{c}\approx163.5\pm1$~ns), the upper bound is normally set to 20~\ms{}  (i.e. the maximum length) but has been checked with lower values (1.5~\ms) in case of systematics.
-
-The initial fit parameters are less important; the primary concern is to avoid degeneracy within the fit. As one of the values ($\tau_{c}$) is well known this is normally fixed (at 163.5~ns) whilst $\tau_{f}$ is given a value of 2~\ms{} (i.e. close to the expected value), the `$N$' values are set according to their expected contribution to the count of any bin ($N_{c}$:~maximum, $N_{f}$:~$^1/_2$~maximum and $N_{b}$:~$^1/_{10}$~maximum).
-
-\section{Results}\label{sec:results}
-\section{Conclusion}\label{sec:conclusion}
-It's all fucked
-
+% section muon_yield (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
 \bibliography{}
 \end{document}
