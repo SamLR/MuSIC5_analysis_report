@@ -76,6 +76,13 @@
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
+The analysis of the \nth{5}~MuSIC beam time splits into 5~logical sub-algorithms called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Acceptance' (Section~\ref{sec:acceptance}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Acceptance' section covers the calculation of the detector acceptance based on simulated data. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}.
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=\textwidth]{image/Analysis_flow_diagram.png}
+	\caption{Flow diagram of the analysis' logic}
+	\label{fig:analysis_flow_diagrm}
+\end{figure}
 
 % section introduction (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
