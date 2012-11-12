@@ -93,6 +93,9 @@ The analysis of the \nth{5}~MuSIC beam time splits into 5~logical sub-algorithms
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Run Data} % (fold)
 \label{sec:run_data}
+As figure~\ref{fig:analysis_flow_diagrm} shows there are 5 main stages in preparing the real data for analysis. These will will be explained in more detail in the following sub-sections but the general process will be discussed here. The first stage is the receipt of data from the data acquisition system (DAQ) via MIDAS, this creates files of raw data which has to be (in some cases) de-serialised in the next stage before having calibration applied to it. The final stages are to restructure the data according to channel and then create histograms of the TDC values ready for analysis. 
+
+These processes are split across 3 programs: MIDAS; mu\_analysis and mid2root\_converter (which act on .root and .mid MIDAS files respectively); and finally tdc\_file.py which is a python script for creating the TDC histograms.
 
 % section run_data (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
