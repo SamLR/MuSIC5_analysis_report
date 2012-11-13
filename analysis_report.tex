@@ -30,6 +30,8 @@
 
 % Package for including code in the document
 \usepackage{listings}
+% make sure that code listings wrap to the page reasonably nicely
+\lstset{breakindent=40pt, breaklines}
 
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
@@ -45,16 +47,17 @@
 %\pdftrue
 %\fi
 
-\newcommand{\nth}[1]{$#1^\text{th}$}
-\newcommand{\nthTwo}[2]{$#1^\text{#2}$}
-\newcommand{\ms}{$\mu$s}
-
 \ifpdf
 \usepackage[pdftex]{graphicx}
 \else
 \usepackage{graphicx}
 \fi
-\title{MuSIC 5 Analsis Report}
+
+\newcommand{\nth}[1]{$#1^\text{th}$}
+\newcommand{\nthTwo}[2]{$#1^\text{#2}$}
+\newcommand{\ms}{$\mu$s}
+
+\title{MuSIC 5 Analysis Report}
 \author{Sam Cook}
 
 \date{2012-11-06}
@@ -76,27 +79,110 @@
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
-The analysis of the \nth{5}~MuSIC beam time splits into 5~logical sub-algorithms called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Acceptance' (Section~\ref{sec:acceptance}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Acceptance' section covers the calculation of the detector acceptance based on simulated data. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}.
-\begin{figure}[htbp]
+The analysis of the \nth{5}~MuSIC beam time splits into 5~logical sub-algorithms called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Acceptance' (Section~\ref{sec:acceptance}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Acceptance' section covers the calculation of the detector acceptance based on simulated data. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}. A brief overview of the experimental set up is given in section~\ref{sec:experimental_set_up}.
+
+\begin{figure}[htb]
 	\centering
-		\includegraphics[width=\textwidth]{image/Analysis_flow_diagram.png}
+		\includegraphics[height=0.49\textheight]{image/Analysis_flow_diagram.png}
 	\caption{Flow diagram of the analysis' logic}
 	\label{fig:analysis_flow_diagrm}
 \end{figure}
-
 % section introduction (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Set Up} % (fold)
 \label{sec:experimental_set_up}
+To measure the momentum distribution of the muon beam two separate problems had to be solved: firstly how to count the muons produced and secondly how to determine their momentum. The first problem is addressed by looking for muon decays through timing data whilst the second is dealt with by using degraders and a thin stopping target to select specific momentums. 
 
+\subsection{Detector} % (fold)
+\label{sub:detector}
+The detector consisted of an aluminium degrader who's thickness could be varied to select different momentum ranges, a thin (1~mm) upstream counter and a thicker (3.5~mm) downstream counter on either side of a 0.5~mm copper stopping target. A schematic of the detector can be seen in figure~\ref{fig:setup}.
+\begin{figure}[htb]
+	\centering
+		\includegraphics[scale=0.5]{image/Detector_setup.png}
+	\caption{Experimental set up of the detector for MuSIC~5 (not to scale)}
+	\label{fig:setup}
+\end{figure}  
+
+The counters used are mylar wrapped scintillators with read-out performed by MPPCs mounted on either end of a wave length shifting fibre bounded along the long axis of the scintillator. The signals from each pair of MPPCs are combined and amplified before being passed to the data acquisition system (DAQ) for processing. 
+
+% subsection detector (end)
+\subsection{Data Acquisition} % (fold)
+\label{sub:data_acquisition}
+The Data Acquisition (DAQ) took two measurements: the time at which signals arrived from the MPPC and the size of those signals. The timing measurements are of the primary concern for this analysis. The DAQ itself had 3 distinct stages: discrimination, trigger formation and readout.
+
+MPPCs are inherently noisy devices and discrimination is required to separate signal due to scintillation events from the MPPC's noise; this was done by setting a voltage threshold which a signal had to exceed in order to be considered. Two thresholds were used: a lower one for the upstream counters and a higher one for those further downstream. The lower threshold for the, thinner, upstream counters enabled better detection of minimally ionising muons whilst the higher downstream threshold enabled better detection of the electrons produced by muonic decay. 
+
+Once suitable signals had been discriminated for a trigger was created based on the signature of muonic decay. This was done by looking for anti-coincidence between the up and downstream counters. This was done on the assumption that a muon that doesn't decay in the detector region will be seen in both counters within a very small window of time (<50~ns). The only other constraint on the formation of a trigger was that the system wasn't busy in which case the trigger couldn't be accepted.
+
+The trigger, once formed, signalled the start of readout there were two primary modules for readout a Multi-hit Time to Digital Converter (MTDC) which is the primary concern for this analysis and an Charge to Digital Converter (QDC). The MTDC recorded all suitable signals received at either the up or downstream counters in a 20\ms window after the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}.
+\begin{table}
+	\begin{center}
+	\begin{tabular}{c|c|c}
+		Channel & Signal & Notes\\
+		\hline
+		0  & TDC0 & Time at which the trigger was formed \\
+		1  & U1   & Upstream counter                     \\
+		2  & U2   & "                                    \\
+		3  & U3   & "                                    \\
+		4  & U4   & "                                    \\
+		5  & U5   & "                                    \\
+		6  & U6   & "                                    \\
+		7  & U7   & "                                    \\
+		8  & U8   & "                                    \\
+		9  & D1   & Downstream counter                   \\
+		10 & D2   & "                                    \\
+		11 & D3   & "                                    \\
+		12 & D4   & "                                    \\
+		13 & D5   & "                                    \\
+		14 & Ge1  & Germanium not used in this analysis  \\
+		15 & Ge2  & "                                    \\
+	\end{tabular}
+	\end{center}
+	\caption{Channel assignment for the MTDC. QDC channel assignment follows the same scheme but has no entry for channel 0 (as TDC 0 will be one of the upstream counters by design).}
+	\label{tab:mtdc_ch}
+\end{table}
+
+A scaler was also used to continuously record various other diagnostics (see table~\ref{tab:scaler_chs}) for the experiment. The scaler was polled regularly throughout data taking. Some of these diagnostics are used as verification of the data (for example: using the ratio of triggers to potential triggers to estimate the dead time of the system).
+\begin{table}
+	\centering
+	\begin{tabular}{c|c|l}
+		Channel & Signal & Notes\\
+		\hline
+		0 & SEC & Measure of the proton current\\
+		1 & Trigger & number of t0's\\
+		2 & U and $\overline{\text{D}}$ & count of potential triggers\\
+		3 & U & Upstream only\\
+		4 & D & Downstream only\\
+		5 & Scint & -\\
+		6 & unused & -\\
+		7 & clk & Record of time passed\\
+	\end{tabular}
+	\caption{Table of scaler channels and their designation}
+	\label{tab:scaler_chs}
+\end{table}
+
+% subsection data_acquisition (end)
 % section experimental_set_up (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Run Data} % (fold)
 \label{sec:run_data}
-As figure~\ref{fig:analysis_flow_diagrm} shows there are 5 main stages in preparing the real data for analysis. These will will be explained in more detail in the following sub-sections but the general process will be discussed here. The first stage is the receipt of data from the data acquisition system (DAQ) via MIDAS, this creates files of raw data which has to be (in some cases) de-serialised in the next stage before having calibration applied to it. The final stages are to restructure the data according to channel and then create histograms of the TDC values ready for analysis. 
+As figure~\ref{fig:analysis_flow_diagrm} shows there are 5 main stages in preparing the real data for analysis (receipt of the data from MIDAS, de-serialisation, calibration, restructuring and histogramming). These will will be explained in more detail in the following sub-sections but the general process will be discussed here. The first stage is the receipt of data from the DAQ via MIDAS, this creates files of raw data which has to be (in some cases) de-serialised in the next stage before having calibration applied to it. The final stages are to restructure the data according to channel and then create histograms of the TDC values ready for analysis. 
 
-These processes are split across 3 programs: MIDAS; mu\_analysis and mid2root\_converter (which act on .root and .mid MIDAS files respectively); and finally tdc\_file.py which is a python script for creating the TDC histograms.
+These processes are split across 4 programs: MIDAS; mu\_analysis and mid2root\_converter (which act on .root and .mid MIDAS files respectively); and finally tdc\_file.py which is a python script for creating the TDC histograms.
 
+\subsection{Data from MIDAS} % (fold)
+\label{sub:data_from_midas}
+MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ. As discussed in section~\ref{sub:data_acquisition} there were two asynchronous systems in the DAQ to be read out: the trigger and the scaler systems (the QDC and MTDC making up the trigger; the scaler on its own). MIDAS stores the raw data from the CAMAC crate (MTDC, QDC and Scaler) in their respective structures either as binary xml (.mid files) or within binary root files (.root).
+
+The structure received from MIDAS consisted of a tree for each CAMAC module used. Each tree consisted of two integer branches: `nX' and `X[nX]' where `X' was the name of the module (i.e `TDC' or `QDC').
+% subsubsection data_from_midas (end)
+\subsection{De-Serialisation} % (fold)
+\label{sub:de_serialisation}
+The first problem with the raw data from MIDAS is that the information from the MTDC is serialised and mangled with the channel number, i.e. the data from each channel is tagged with the channel number and not read out in a predictable manner. The same is true of the QDC data but not the scaler information. Below are brief summaries of the algorithms used to de-serialise the MTDC data, for full listings see appendix~\ref{app:deserialisation}.
+\begin{lstlisting}[caption={Pseudo-code demonstrating the de-serialisation of the raw MTDC data from MIDAS (for a )},label=lst:lab,float=htbp]
+	
+\end{lstlisting}
+% subsection de_serialisation (end)
 % section run_data (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Simulated Data} % (fold)
@@ -119,6 +205,53 @@ These processes are split across 3 programs: MIDAS; mu\_analysis and mid2root\_c
 
 % section muon_yield (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{De-serialisation code} % (fold)
+\label{app:deserialisation}
+
+\begin{lstlisting}[caption={Functions used for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} MTDC  output, written in C++}, language=C++, float=htbp]
+inline int midus_file::get_tdc_val(const int index) const {
+    unsigned int const tdc_data_mask = 0x01fffff;
+    unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
+    return static_cast<int>(val & tdc_data_mask);
+}
+
+inline int midus_file::get_tdc_ch(const int index) const {
+    unsigned int const tdc_channel_mask = 0x03e00000;
+    unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
+    return static_cast<int>((val & tdc_channel_mask) >> 21);
+}
+
+inline bool midus_file::is_good_tdc_measure(const int index) const {
+    unsigned int const tdc_data_type_mask = 0xf8000000;
+    unsigned int const tdc_measurement    = 0x00000000;
+    unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
+    return ((val & tdc_data_type_mask) == tdc_measurement);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Functions used for de-serialising CAEN V792N \ref{REF FOR THE DATA SHEET} QDC, written in C++}, language=C++, float=htbp]
+inline int midus_file::get_qdc_val(int const index) const {
+	unsigned int const data_mask = 0x00000fff;
+	unsigned int const val = static_cast<unsigned int>(branches_m[qdc_i].data[index]);
+	return static_cast<int>(val & data_mask); 
+}
+
+inline int midus_file::get_qdc_ch(const int index) const {
+    unsigned int const channel_mask = 0x001f0000;
+    unsigned int const val = static_cast<unsigned int>( branches_m[qdc_i].data[index]);
+    return static_cast<int>((val & channel_mask) >> 17);
+}
+
+inline bool midus_file::is_good_qdc_measure(const int index) const {
+    unsigned int const underflow_mask = 0x00002000;
+    unsigned int const overflow_mask  = 0x00001000;
+    unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
+    return !((underflow_mask & val) || (overflow_mask & val));
+}
+\end{lstlisting}
+
+% section tdc_deserialisation (end)
 \bibliographystyle{plain}
 \bibliography{}
 \end{document}
