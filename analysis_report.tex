@@ -117,7 +117,7 @@ MPPCs are inherently noisy devices and discrimination is required to separate si
 
 Once suitable signals had been discriminated for a trigger was created based on the signature of muonic decay. This was done by looking for anti-coincidence between the up and downstream counters. This was done on the assumption that a muon that doesn't decay in the detector region will be seen in both counters within a very small window of time (<50~ns). The only other constraint on the formation of a trigger was that the system wasn't busy in which case the trigger couldn't be accepted.
 
-The trigger, once formed, signalled the start of readout there were two primary modules for readout a Multi-hit Time to Digital Converter (MTDC) which is the primary concern for this analysis and an Charge to Digital Converter (QDC). The MTDC recorded all suitable signals received at either the up or downstream counters in a 20\ms{} window after the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}.
+The trigger, once formed, signalled the start of readout there were two primary modules for readout a Multi-hit Time to Digital Converter (MTDC) which is the primary concern for this analysis and an Charge to Digital Converter (QDC). The MTDC recorded all suitable signals received at either the up or downstream counters in a 20\ms{} window after the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}. To increase the accuracy of the MTDC the trigger time is recorded on a seperate channel called `TDC0'.
 \begin{table}
 	\begin{center}
 	\begin{tabular}{c|c|c}
@@ -178,9 +178,9 @@ These processes are split across 4 programs: MIDAS; mu\_analysis and mid2root\_c
 
 \subsection{Data from MIDAS} % (fold)
 \label{sub:data_from_midas}
-MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ. As discussed in section~\ref{sub:data_acquisition} there were two asynchronous systems in the DAQ to be read out: the trigger and the scaler systems (the QDC and MTDC making up the trigger; the scaler on its own). MIDAS stores the raw data from the CAMAC crate (MTDC, QDC and Scaler) in their respective structures either as binary xml (.mid files) or within binary root files (.root).
+MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ. As discussed in section~\ref{sub:data_acquisition} there were two asynchronous systems in the DAQ to be read out: the trigger and the scaler systems (the QDC and MTDC making up the trigger; the scaler on its own). MIDAS stores the raw data from the VME crate (MTDC, QDC and Scaler) in their respective structures either as binary xml (.mid files) or within binary root files (.root).
 
-The structure received from MIDAS consisted of a tree for each CAMAC module used. Each tree consisted of two integer branches: `nX' and `X[nX]' where `X' was the name of the module (i.e `TDC' or `QDC').
+The structure received from MIDAS consisted of a tree for each VME module used. Each tree consisted of two integer branches: `nX' and `X[nX]' where `X' was the name of the module (i.e `TDC', used for the MTDC, or `QDC').
 % subsubsection data_from_midas (end)
 \subsection{De-Serialisation} % (fold)
 \label{sub:de_serialisation}
@@ -198,10 +198,20 @@ The first problem with the raw data from MIDAS is that the information from the 
 \label{sub:calibration}
 The MTDC has a stated least significant bit resolution of $\sim$25~ps with 21 bit of data, this gives a maximum range of 52\ms{}. Conversion from the stored value to real, trigger aligned, time is done using the formula:
 \begin{align}\label{equ:tdc_calibration}
-	t' = 1.025\times\frac{t - t0}{40}
+	t' = 1.025\times\frac{t - TDC0}{40}
 \end{align}
-where $t'$ is the calibrated time, $t$ is the MTDC value and $t0$ is the trigger time. The factor, $1.025$, is derived by feeding a known clock into to the MTDC whilst the factor $40$ converts from ps to ns.
+where $t'$ is the calibrated time, $t$ is the MTDC value and $TDC0$ is the trigger time. The factor, $1.025$, is derived by feeding a known clock into to the MTDC whilst the factor $40$ converts from ps to ns.
 % subsection calibration (end)
+\subsection{Restructure} % (fold)
+\label{sub:restructure}
+In order to be more easily manipulated the MIDAS data has to be restructured. The initial format is a simple structure of one branch for each module (i.e. one for MTDC one for the QDC and a final one for errors). A second tree is used to store the scaler values. 
+
+In the restructured file each channel is a branch of a tree with the following leaves: QDC, TDC0, nHITS, TDC[nHITS]. The QDC value is self-explanatory, TDC0 is the trigger time, nHITS is the number of entries recorded by the MTDC for that channel and TDC is an array of these values. The error data is ignored as is the scaler tree as these can be read from the original file if needed as neither require de-serialisation or calibration.
+% subsection restructure (end)
+\subsection{Histogramming} % (fold)
+\label{sub:Histogramming}
+Once the data has been restructured it is trivial to create a histogram of the TDC data for each channel which forms the basis of the later analysis.
+% subsection histogramming (end)
 % section run_data (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Simulated Data} % (fold)
