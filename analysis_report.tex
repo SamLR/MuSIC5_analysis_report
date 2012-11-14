@@ -79,7 +79,7 @@ To measure the momentum distribution of the muon beam two separate problems had 
 
 \subsection{Detector} % (fold)
 \label{sub:detector}
-The detector consisted of an aluminium degrader who's thickness could be varied to select different momentum ranges, a thin (1~mm) upstream counter and a thicker (3.5~mm) downstream counter on either side of a 0.5~mm copper stopping target. A schematic of the detector can be seen in figure~\ref{fig:setup}. Based on simulation (section~\ref{sec:simulated_data}) we can predict the mean momentum of muons that decay for different degrader thicknesses, the momentum distributions can be seen in figure~\ref{fig:stopped_muon_mom} with the mean momentums given in 
+The detector consisted of an aluminium degrader who's thickness could be varied to select different momentum ranges, a thin (1~mm) upstream counter and a thicker (3.5~mm) downstream counter on either side of a 0.5~mm copper stopping target. A schematic of the detector can be seen in figure~\ref{fig:setup}. Based on simulation (section~\ref{sec:simulated_data}) we can predict the mean momentum of muons that decay for different degrader thicknesses, the momentum distributions can be seen in figure~\ref{fig:stopped_muon_mom} with the mean momentums given in table~\ref{tab:stopped_muon_mom}.
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[scale=0.5]{image/Detector_setup.png}
@@ -104,20 +104,21 @@ The detector consisted of an aluminium degrader who's thickness could be varied 
 	\end{tabular}
 	\end{center}
 	\caption{Simulated mean momentums for decaying muons. 900~M initial protons}
-	\label{label}
+	\label{tab:stopped_muon_mom}
 \end{table}
-The counters used are mylar wrapped scintillators with read-out performed by MPPCs mounted on either end of a wave length shifting fibre bounded along the long axis of the scintillator. The signals from each pair of MPPCs are combined and amplified before being passed to the data acquisition system (DAQ) for processing.
+
+The counters used were mylar wrapped scintillators with read-out performed by MPPCs mounted on either end of a wave length shifting fibre bounded along the long axis of the scintillator using optical cement. The signals from each pair of MPPCs are combined and amplified before being passed to the data acquisition system (DAQ) for processing.
 
 % subsection detector (end)
 \subsection{Data Acquisition} % (fold)
 \label{sub:data_acquisition}
-The Data Acquisition (DAQ) took two measurements: the time at which signals arrived from the MPPC and the size of those signals. The timing measurements are of the primary concern for this analysis. The DAQ itself had 3 distinct stages: discrimination, trigger formation and readout.
+The Data Acquisition (DAQ) took two measurements: the time at which signals arrived from the MPPC and the strength of those signals. The timing measurements are of the primary concern for this analysis. The DAQ itself had 3 distinct stages: discrimination, trigger formation and readout.
 
-MPPCs are inherently noisy devices and discrimination is required to separate signal due to scintillation events from the MPPC's noise; this was done by setting a voltage threshold which a signal had to exceed in order to be considered. Two thresholds were used: a lower one for the upstream counters and a higher one for those further downstream. The lower threshold for the, thinner, upstream counters enabled better detection of minimally ionising muons whilst the higher downstream threshold enabled better detection of the electrons produced by muonic decay. 
+MPPCs are inherently noisy devices and discrimination is required to separate signal due to scintillation events from the MPPC's noise. A voltage threshold set which (when exceeded) created a digital signal. Two thresholds were used: a lower one for the upstream counters and a higher one for those further downstream. The lower threshold for the, thinner, upstream counters enabled better detection of minimally ionising muons whilst the higher downstream threshold enabled better detection of the electrons produced by muonic decay and are more ionising. 
 
-Once suitable signals had been discriminated for a trigger was created based on the signature of muonic decay. This was done by looking for anti-coincidence between the up and downstream counters. This was done on the assumption that a muon that doesn't decay in the detector region will be seen in both counters within a very small window of time (<50~ns). The only other constraint on the formation of a trigger was that the system wasn't busy in which case the trigger couldn't be accepted.
+Using the signals from the discriminator a trigger was created based on the signature of muonic decay. This was done by looking for anti-coincidence between the up and downstream counters. This was done on the assumption that a muon that doesn't decay in the detector region will be seen in both counters within a very small window of time ($<$50~ns). The only other constraint on the formation of a trigger was that the system wasn't busy in which case the trigger couldn't be accepted.
 
-The trigger, once formed, signalled the start of readout there were two primary modules for readout a Multi-hit Time to Digital Converter (MTDC) which is the primary concern for this analysis and an Charge to Digital Converter (QDC). The MTDC recorded all suitable signals received at either the up or downstream counters in a 20\ms{} window after the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}. To increase the accuracy of the MTDC the trigger time is recorded on a seperate channel called `TDC0'.
+The trigger, once formed, signalled the start of readout. There were 3 modules to be read out via VMEbus (VME): a charge to Digital Converter (QDC), a scaler and a Multi-hit Time to Digital Converter (MTDC) which is of primary concern for this analysis. The MTDC recorded all signals passing discrimination and not co-incident with a signal in the other counter within a 20\ms{} period following the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}. To increase the accuracy of the MTDC the trigger time is recorded on a seperate channel called `TDC0'.
 \begin{table}
 	\begin{center}
 	\begin{tabular}{c|c|c}
@@ -148,7 +149,7 @@ The trigger, once formed, signalled the start of readout there were two primary 
 	\label{tab:mtdc_ch}
 \end{table}
 
-A scaler was also used to continuously record various other diagnostics (see table~\ref{tab:scaler_chs}) for the experiment. The scaler was polled regularly throughout data taking. Some of these diagnostics are used as verification of the data (for example: using the ratio of triggers to potential triggers to estimate the dead time of the system).
+The scaler was used to record system diagnostics (e.g. the trigger rate). The scaler was polled regularly throughout data taking. The QDC may be used in later analysis, for example to apply more stringent energy cuts at trigger time. The QDC had the same channel assignment as the TDC but without the germanium detector (as it had its own analogue to digital converter) and TDC0 (which was a digital signal).
 \begin{table}
 	\centering
 	\begin{tabular}{c|c|l}
@@ -172,19 +173,21 @@ A scaler was also used to continuously record various other diagnostics (see tab
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Run Data} % (fold)
 \label{sec:run_data}
-As figure~\ref{fig:analysis_flow_diagrm} shows there are 5 main stages in preparing the real data for analysis (receipt of the data from MIDAS, de-serialisation, calibration, restructuring and histogramming). These will will be explained in more detail in the following sub-sections but the general process will be discussed here. The first stage is the receipt of data from the DAQ via MIDAS, this creates files of raw data which has to be (in some cases) de-serialised in the next stage before having calibration applied to it. The final stages are to restructure the data according to channel and then create histograms of the TDC values ready for analysis. 
+As figure~\ref{fig:analysis_flow_diagrm} shows there are 5 stages in preparing the experimental data for analysis (receipt of the data from MIDAS, de-serialisation, calibration, restructuring and histogramming). These will will be explained in more detail in the following sub-sections but the general process will be discussed here. The first stage is the receipt of data from the DAQ via MIDAS, this creates files of raw data which has to be de-serialised in the next stage before having calibration applied to it. The final stages are to restructure the data according to channel and then create histograms of the TDC values ready for analysis. 
 
 These processes are split across 4 programs: MIDAS; mu\_analysis and mid2root\_converter (which act on .root and .mid MIDAS files respectively); and finally tdc\_file.py which is a python script for creating the TDC histograms.
 
 \subsection{Data from MIDAS} % (fold)
 \label{sub:data_from_midas}
-MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ. As discussed in section~\ref{sub:data_acquisition} there were two asynchronous systems in the DAQ to be read out: the trigger and the scaler systems (the QDC and MTDC making up the trigger; the scaler on its own). MIDAS stores the raw data from the VME crate (MTDC, QDC and Scaler) in their respective structures either as binary xml (.mid files) or within binary root files (.root).
+MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ via VME. 
 
-The structure received from MIDAS consisted of a tree for each VME module used. Each tree consisted of two integer branches: `nX' and `X[nX]' where `X' was the name of the module (i.e `TDC', used for the MTDC, or `QDC').
+MIDAS stored the raw data from each run as a single file either in binary xml format (.mid files) or in root format (.root). Data was read from the VME crate in two asynchronous modes: `Trigger' and `Scaler' each corresponded to a separate tree structure in the resulting file. The majority of the time the system operated in trigger-mode: when ever a trigger was formed the controlling PC was informed and once the data had been gathered read out of the MTDC and QDC occurred via the VME. Scaler mode occurred at regular intervals and consisted of reading the diagnostics data gathered by the scaler, this did not reset the module which continued to accumulate data. 
+
+Each tree contained a branch per module being read, the trigger tree also had also branch for errors (named `ERR'). The branches all had the same structure: an integer that recorded the number of values read and an array of integers containing those values. For the scaler and QDC modules the number of values read out was the same every time as they both had a fixed number of channels and could only take one measurement on each. The MTDC had a variable number of values to read out as it could record multiple hits on each channel within the window.
 % subsubsection data_from_midas (end)
 \subsection{De-Serialisation} % (fold)
 \label{sub:de_serialisation}
-The first problem with the raw data from MIDAS is that the information from the MTDC is serialised and mangled with the channel number, i.e. the data from each channel is tagged with the channel number and not read out in a predictable manner. The same is true of the QDC data but not the scaler information. Below are brief summaries of the algorithms used to de-serialise the MTDC data, for full listings see appendix~\ref{app:deserialisation}.
+The first raw data from MIDAS for the MTDC and QDC are serialised and mangled with the channel number this means that they require processing before the real values can be extracted. Below are brief summaries of the algorithms used to de-serialise the MTDC data, for full listings see appendix~\ref{app:deserialisation}.
 %
 \begin{center}
 \begin{lstlisting} [caption={Pseudo-code demonstrating the de-serialisation of the raw MTDC data from MIDAS (for a CAEN V1290N). \textbf{NB} `$\&$' is a bit-wise AND; `$>>$'is a right bit-shift and `$==$' is a logical equals.}, label={lst:tdc_deserialisation}, float=htbp, language=C++]
@@ -198,13 +201,13 @@ The first problem with the raw data from MIDAS is that the information from the 
 \label{sub:calibration}
 The MTDC has a stated least significant bit resolution of $\sim$25~ps with 21 bit of data, this gives a maximum range of 52\ms{}. Conversion from the stored value to real, trigger aligned, time is done using the formula:
 \begin{align}\label{equ:tdc_calibration}
-	t' = 1.025\times\frac{t - TDC0}{40}
+	t'   &= \frac{1.025}{40}(t - TDC0)
 \end{align}
-where $t'$ is the calibrated time, $t$ is the MTDC value and $TDC0$ is the trigger time. The factor, $1.025$, is derived by feeding a known clock into to the MTDC whilst the factor $40$ converts from ps to ns.
+where $t'$ is the calibrated time, $t$ is the de-serialised MTDC value and $TDC0$ is the de-serialised trigger time. The fraction is the number of MTDC bins per ns.
 % subsection calibration (end)
 \subsection{Restructure} % (fold)
 \label{sub:restructure}
-In order to be more easily manipulated the MIDAS data has to be restructured. The initial format is a simple structure of one branch for each module (i.e. one for MTDC one for the QDC and a final one for errors). A second tree is used to store the scaler values. 
+In order for the MIDAS data to be easily manipulated it was restructured. The initial format is a simple structure of one branch for each module (i.e. one for MTDC one for the QDC and a final one for errors). A second tree is used to store the scaler values. 
 
 In the restructured file each channel is a branch of a tree with the following leaves: QDC, TDC0, nHITS, TDC[nHITS]. The QDC value is self-explanatory, TDC0 is the trigger time, nHITS is the number of entries recorded by the MTDC for that channel and TDC is an array of these values. The error data is ignored as is the scaler tree as these can be read from the original file if needed as neither require de-serialisation or calibration.
 % subsection restructure (end)
