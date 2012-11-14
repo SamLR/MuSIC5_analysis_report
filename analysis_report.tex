@@ -16,12 +16,14 @@
 \usepackage{multirow}
 
 % Package for including code in the document
-\usepackage{listings}
-% make sure that code listings wrap to the page reasonably nicely
-% gobble removes first 4 characters, allows indentation for source readability
-\lstset{breakindent=40pt, breaklines=true, gobble=4, captionpos=b}
-% Apparently preloading lstlangauages speeds things up
-\lstloadlanguages{C,C++}
+\usepackage{minted}
+% \usepackage{listings}
+% \usepackage{color}
+% % make sure that code listings wrap to the page reasonably nicely
+% % gobble removes first 4 characters, allows indentation for source readability
+% \lstset{breakindent=40pt, breaklines=true, gobble=4, captionpos=b}
+% % Apparently preloading lstlangauages speeds things up
+% \lstloadlanguages{C,C++,Bash}
 
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
@@ -187,15 +189,17 @@ Each tree contained a branch per module being read, the trigger tree also had al
 % subsubsection data_from_midas (end)
 \subsection{De-Serialisation} % (fold)
 \label{sub:de_serialisation}
-The first raw data from MIDAS for the MTDC and QDC are serialised and mangled with the channel number this means that they require processing before the real values can be extracted. Below are brief summaries of the algorithms used to de-serialise the MTDC data, for full listings see appendix~\ref{app:deserialisation}.
+The first raw data from MIDAS for the MTDC and QDC are serialised and mangled with the channel number this means that they require processing before the real values can be extracted. Below are brief summaries of the algorithms used to de-serialise the MTDC data (listing~\ref{lst:mtdc_algo}), for full listings see appendix~\ref{app:deserialisation}.
 %
-\begin{center}
-\begin{lstlisting} [caption={Pseudo-code demonstrating the de-serialisation of the raw MTDC data from MIDAS (for a CAEN V1290N). \textbf{NB} `$\&$' is a bit-wise AND; `$>>$'is a right bit-shift and `$==$' is a logical equals.}, label={lst:tdc_deserialisation}, float=htbp, language=C++]
+\begin{listing}[htbp]
+	\begin{minted}[gobble=4]{c++}
     tdc_value      =  raw_val & 0x001f ffff
     tdc_channel    = (raw_val & 0x03e0 0000) >> 21
     tdc_valid_read = (raw_val & 0xf800 0000) == 0x0
-\end{lstlisting}
-\end{center}
+	\end{minted}
+	\caption{Method for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} data}
+	\label{lst:mtdc_algo}
+\end{listing}
 % subsection de_serialisation (end)
 \subsection{Calibration} % (fold)
 \label{sub:calibration}
@@ -219,16 +223,24 @@ Once the data has been restructured it is trivial to create a histogram of the T
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Simulated Data} % (fold)
 \label{sec:simulated_data}
-To save time in simulation it was split into three separate programs: the initial protons and beam transport system were simulated in G4Beamline (G4BL) \ref{REF G4BL}; the detector in a custom program implemented with Geant4 (G4); the digitisation and histogramming were done in ROOT.
+To save time in simulation it was split into three separate programs: the initial protons and beam transport system were simulated in G4Beamline (G4BL) \ref{REF G4BL}; the detector in a custom program implemented with Geant4 (G4) \ref{REF G4}; the digitisation and histogramming were done in ROOT.
+
 \subsection{G4Beamline Particle Production} % (fold)
 \label{sub:g4bl_particle_production}
+Simulation of the bulk of the detector (the pion capture solenoid and muon transport system) a G4BL macro was developed. This is quicker and simpler than writing a custom program using G4 and gave many of the same options. This was used to simulate 900~million initial protons (which is the maximum number of initial particles/seeds for which G4BL/G4 can guarantee their random number generator will generate unique values). The protons were simulated interacting with the graphite target in the pion capture solenoid and then the resultant particles were transported to the end of the beam-pipe where a monitor recorded the distribution.
 
 % subsection g4bl_particle_production (end)
 \subsection{Geant4 Detector Simulation} % (fold)
 \label{sub:geant4_detector_simulation}
+As G4BL `does not simulate the performance of real-world detectors' \ref{G4BL QUOTE REF} a custom simulation was written using the Geant4 framework. This simulated the detector as 4 discrete volumes: the degrader, the stopping target and the two counters. The particle distribution from G4BL was used as primary particles. The magnetic field supplied by Toshiba was also simulated.
 
+The simulation allowed variation of the degrader and stopping target material as well as their thickness, their width and height were set to match those used in the real experiment. The counters were simulated as 2 large scintillators whose dimensions matched those of the two arrays used in the experiment.
+
+Readout from the simulation was done via step actions which, if the particle track was found to be within one of the 4 volumes, would record the relevant information (momentum, position, particle type, track ID, parent ID, process, whether it was the first or last step in the volume) in a root file which also recorded a copy of the primary particle from G4BL for each event.
+
+Control of the simulation was exerted using macros and command line arguments. The macros for a set of simulations (e.g. simulating the 4 degraders used in the experiment) were generated via bash scripts that made the set the appropriate flags as well as calling the simulation with the correct arguments.
 % subsection geant4_detector_simulation (end)
-\subsection{Digitisation & histogramming} % (fold)
+\subsection{Digitisation \& histogramming} % (fold)
 \label{sub:digitisation_histogramming}
 
 % subsection digitisation_histogramming (end)
@@ -252,10 +264,12 @@ To save time in simulation it was split into three separate programs: the initia
 \appendix
 \section{De-serialisation code} % (fold)
 \label{app:deserialisation}
-
-\begin{center}
-	\begin{lstlisting}[caption={Functions used for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} MTDC  output, written in C++}, language=C++, float=htbp]
+These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC DATA SHEET} (MTDC) and CAEN V792N (QDC) \ref{QDC data sheet} data. They are extracts from the `midus file' object, written in C++.
+% \begin{listing}[htbp]
+	\begin{minted}[gobble=4, linenos=True, stepnumber=5]{c++}
+    // Functions used for de-serialising CAEN V1290N MTDC.
     inline int midus_file::get_tdc_val(const int index) const {
+    // Mask the data to get the recorded value from the MTDC branch at index
         unsigned int const tdc_data_mask = 0x01fffff;
         unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
         return static_cast<int>(val & tdc_data_mask);
@@ -268,17 +282,16 @@ To save time in simulation it was split into three separate programs: the initia
     }
     
     inline bool midus_file::is_good_tdc_measure(const int index) const {
+    // This checks the error bits
         unsigned int const tdc_data_type_mask = 0xf8000000;
         unsigned int const tdc_measurement    = 0x00000000;
         unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
         return ((val & tdc_data_type_mask) == tdc_measurement);
     }
-	\end{lstlisting}
-\end{center}
-
-\begin{center}
-	\begin{lstlisting}[caption={Functions used for de-serialising CAEN V792N \ref{REF FOR THE DATA SHEET} QDC, written in C++}, language=C++, float=htbp]
+    
+    // Functions used for de-serialising CAEN V792N QDC.
     inline int midus_file::get_qdc_val(int const index) const {
+    // Mask the data to get the QDC value from the branch at index
     	unsigned int const data_mask = 0x00000fff;
     	unsigned int const val = static_cast<unsigned int>(branches_m[qdc_i].data[index]);
     	return static_cast<int>(val & data_mask); 
@@ -291,14 +304,14 @@ To save time in simulation it was split into three separate programs: the initia
     }
     
     inline bool midus_file::is_good_qdc_measure(const int index) const {
+    // Check for over/under flow in the value
         unsigned int const underflow_mask = 0x00002000;
         unsigned int const overflow_mask  = 0x00001000;
         unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
         return !((underflow_mask & val) || (overflow_mask & val));
     }
-	\end{lstlisting}
-
-\end{center}
+    \end{minted}
+% \end{listing}
 
 % section tdc_deserialisation (end)
 \bibliographystyle{plain}
