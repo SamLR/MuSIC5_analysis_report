@@ -256,16 +256,16 @@ The acceptance is then the ratio of muon/electron pairs to the initial number of
 \begin{align}
     \text{Acceptance} &= \frac{\text{Decay muons}}{\text{Initial Muons}} \label{equ:acceptance}
 \end{align}
-It is worth noting that given the above definition and method the acceptance changes due to the thickness and type of degrader used. Obviously for a degrader that removes the majority of the muons from the beam will have a smaller acceptance as a smaller fraction of the beam will remain to be detected. The results of the acceptance calculations are given in table~\ref{tab:acceptance}
+It is worth noting that given the above definition and method the acceptance changes due to the thickness and type of degrader used. Obviously for a degrader that removes the majority of the muons from the beam will have a smaller acceptance as a smaller fraction of the beam will remain to be detected. The results of the acceptance calculations are given in table~\ref{tab:acceptance}, the macro used can be seen in appendix~\ref{app:acceptance}.
 \begin{table}
     \begin{center}
     \begin{tabular}{c| r@{ $\pm$ }l | r@{ $\pm$ }l | r@{ $\pm$ }l }
-        Degrader (mm) & \multicolumn{2}{|c}{Decay Muons} & \multicolumn{2}{|c}{Initial Muons} & \multicolumn{2}{|c}{Acceptance}\\
+        Degrader (mm) & \multicolumn{2}{|c}{Decay Muons} & \multicolumn{2}{|c}{Initial Muons} & \multicolumn{2}{|c}{Acceptance (\%)}\\
         \hline
-        Air 5.0       &   &   &   &   &   &   \\
-        Aluminium 0.5 &   &   &   &   &   &   \\
-        Aluminium 1.0 &   &   &   &   &   &   \\
-        Aluminium 5.0 &   &   &   &   &   &   \\
+        Air 5.0       & 8089 & 90 & 95719 & 310 & 8.5 & 0.1 \\
+        Aluminium 0.5 & 7068 & 84 & 95719 & 310 & 7.4 & 0.1 \\
+        Aluminium 1.0 & 6394 & 80 & 95719 & 310 & 6.7 & 0.1 \\
+        Aluminium 5.0 & 4180 & 65 & 95719 & 310 & 4.4 & 0.1 \\
     \end{tabular}
     \end{center}
     \caption{Table of the variance of acceptance with degrader thickness}
@@ -300,14 +300,53 @@ There are 8 parameters that need to be set before the fit can proceed these are:
     \item Initial value for $\tau_{c}$
     \item Initial value for $\tau_{f}$
 \end{enumerate}
-Obviously these fall into two broad groups: fit settings (the bin width, upper and lower bounds) and the initial parameter values (the remaining). 
+Obviously these fall into two broad groups: `fit settings' (the bin width, upper and lower bounds) and the `initial parameter values' (the remaining). The fit settings primarily affect how good a fit is achieved whilst the initial parameter values are mainly chosen to ensure that there are no degeneracies in the fit. It is worth noting that $\tau_{c}$ is generally fixed at its canonical value of 163.5~ns \ref{REF FOR CU TAU} but this has a limited affect on the fit, typical fit values can be seen in table~\ref{tab:typical_fit_values}.
+
+The largest changes to the fit are due to the fit settings. These determine the range that is fitted and the smoothness of the data that the fit is attempted on. The lower bound of the range probably has the largest affect on the fit. It is obvious that a large enough lower bound will utterly remove the region in which the copper component is dominant to avoid this the minimum value of 50~ns is usually chosen. The upper bound has very little affect for any reasonable value ($>$15\ms) as that portion of the histograms is usually flat. The bin width has an important part to play as it the prime method of smoothing data. This is especially important as there is apparently a source of high frequency noise ($\sim$16~MHz) this is suspected to be due to the cyclotron setting the bin width to larger than $\sim$60~ns removes the affect of this.
+\begin{table}
+    \begin{center}
+    \begin{tabular}{c | c}
+        Parameter   & Value \\
+        \hline
+        Bin width   & 75~ns \\
+        Lower bound & 50~ns \\
+        Upper bound & 20\ms \\
+        $N_{b}$     & $^1/_{10} \times$ maximum bin value \\
+        $N_{c}$     & Maximum bin value\\
+        $N_{f}$     & $^1/_{2} \times$ maximum bin value\\
+        $\tau_{c}$  & 163.5~ns $\pm$ 1~ns\\
+        $\tau_{f}$  & $\sim$2\ms\\
+    \end{tabular}
+    \end{center}
+    \caption{Typical values for the fit parameters. \textbf{NB} that the copper value is often constrained as it is well know, the free muon lifetime is not well known as it is dependant on the combination of the muon lifetime in air, scintillator and as a free particle.}
+    \label{tab:typical_fit_values}
+\end{table}
+
+Once the histograms were fitted the fit parameters were extracted and used to create sub-functions corresponding to the individual components. Using ROOT's `Integral' and `IntegralError' functions the number of decays for each channel corresponding to each component could then be calculated. Equally summing over all the channels in a run the total number of muons for that run could be calculated.
 % subsection the_implementation (end)
 % section fitting_and_integration (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Muon Yield} % (fold)
 \label{sec:muon_yield}
-
+Once the number of muons for each run is known the muon yield is ultimately a matter of scaling. The formula used is:
+\begin{align}
+    Y = \frac{N_{mu}}{\epsilon \times A \times t_{r} \times I}
+\end{align}
+Where $Y$ is the yield, $N_{mu}$ the number of muons for that run, $\epsilon$ is the detector efficiency, $A$ the acceptance for that degrader thickness, $t_{r}$ is the run time in seconds and $I$ is the proton current.
 % section muon_yield (end)
+\section{Conclusion} % (fold)
+\label{sec:conclusion}
+As can be seen from figure~\ref{fig:why_its_buggered} there is a large disagreement between data and simulation as to the muon yield. There seems to be no obvious source for this discrepancy. There are shortcomings in the analysis and simulation but none would be expected to account for such a difference. Obviously the next stage of the analysis is to work through these to ensure that they do not. 
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=\textwidth]{image/sim_vs_data.eps}
+    \caption{Comparison of simulation and data. Simulation are the 4 points across the top, data along the bottom.}
+    \label{fig:why_its_buggered}
+\end{figure}
+
+The most obvious deficiency in the analysis is the lack optical processes in the simulation. Implementing these processes would be the first obvious step in establishing the cause of the difference that we see. Another obvious weakness is the lack of a thorough testing regime to ensure correctness in the simulation, again, this will be high on the priority list to ensure that the simulation is acting as we expect. 
+
+% section conclusion (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %       APPENDIX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -846,6 +885,176 @@ This is the macro used to process the files created by the simulation. It can be
 % subsection digitisation_macro (end)
 % section detector_simulation (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acceptance} % (fold)
+\label{app:acceptance}
+\begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
+    #include "TFile.h"
+    #include "TTree.h"
+    #include "TH1.h"
+    #include "TH1F.h"
+    #include "TMath.h"
+
+    // Structure to read the tree into.
+    struct in_branch {
+        int n_hits;
+        int id[500];
+        int pdgid[500];
+        int counter[500];
+        int parentid[500];
+        bool first_step[500];
+        double tof[500];
+    };
+
+    void set_addresses(TTree* tree, in_branch& branch);
+    int get_index(const int* array, const int length, const int target);
+
+    void acceptance() {
+        // Files of simulated data to use
+        const int n_files = 4;
+        const TString file_roots [n_files] = { "Air_5mm",
+            "Aluminium_0.5mm",
+            "Aluminium_1mm",
+            "Aluminium_5mm" };
+
+        const TString prefix = "~/path/to/files";
+        const TString suffix = ".root";
+        
+        // Number of muons making the cuts
+        unsigned int counts[n_files];     
+        // The number of input muons from g4bl.
+        unsigned int init_muons[n_files]; 
+
+        // Initialise the counts
+        for(int file = 0; file < n_files; ++file) {
+            counts[file] = 0;
+            init_muons[file] = 0;
+        }
+
+        for(unsigned int file = 0; file < n_files; ++file) {
+            // Generate the file name, open it, read in the tree and load the branch
+            TString file_name = prefix + file_roots[file] + suffix;
+            TFile* in_file = new TFile (file_name, "READ");
+            TTree* in_tree = (TTree*) in_file->Get("t");
+            in_branch branch; 
+            set_addresses(in_tree, branch);
+            
+            // Get the number of entries and the number of G4BL muons
+            const int n_entries = in_tree->GetEntries();
+            init_muons[file] = in_tree->GetEntries("abs(in_PDGid)==13");
+            
+            // Loop over all events
+            for(int entry = 0; entry < n_entries; ++entry) {
+                in_tree->GetEntry(entry);
+                
+                const int max_index = 500;
+                int muon_ids_scint1 [max_index];       // Muons that have 'triggered'
+                int electron_ids [max_index];          // Don't double count
+                double muon_time_at_scint1[max_index]; // Ignore times <50ns
+                
+                // index bounds; don't want to loop over 500 zeros
+                int n_seen_muons = 0;  
+                int n_seen_electrons = 0;
+
+                // Initialise arrays
+                for(int i = 0; i < max_index; ++i) {
+                    muon_ids_scint1[i]     = -1;
+                    electron_ids[i]        = -1;
+                    muon_time_at_scint1[i] = -1.0;
+                }
+
+                for(int hit = 0; hit < branch.n_hits; ++hit) {
+                    // is it a muon in the upstream counter
+                    //   Yes: first step?
+                    //      add id to appropriate array
+                    //      record time
+                    //      ++ n_seen_scint1
+                    // is it an electron in the downstream counter?
+                    //   Yes: first step
+                    //      Yes: have we seen its parent?
+                    //          Yes: more than 50ns ago?
+                    //              Yes: count it
+                    const int pid = branch.pdgid[hit];
+                    const int counter = branch.counter[hit];
+                    const int id = branch.id[hit];
+                    const bool first_step = branch.first_step[hit];
+                    if (abs(pid) == 13) {
+                        // muon stuff
+                        if (counter == 1 && first_step) {
+                            // first step in scint 1 now a triggering muon
+                            const int index = get_index(muon_ids_scint1,
+                                                        n_seen_muons, id);
+                            if (index == -1) {
+                                // new muon, log it!
+                                muon_ids_scint1[n_seen_muons] = id;
+                                muon_time_at_scint1[n_seen_muons++] = branch.tof[hit];
+                            } 
+                        }
+                    } else if (abs(pid) == 11) {
+                        // electron/positron stuff
+                        if (counter == 3 &&  first_step) {
+                            // first step in scint 2    
+                            const int e_index = get_index(electron_ids,
+                                                          n_seen_electrons, id);
+                            if (e_index == -1) {
+                                // new electron!
+                                electron_ids[n_seen_electrons++] = id; // log it!
+                                const int parent_index = get_index(muon_ids_scint1,
+                                        n_seen_muons, branch.parentid[hit]);
+                                // have we seen its parent?
+                                if (parent_index != -1) {
+                                    const double dt = branch.tof[hit] 
+                                                      - muon_time_at_scint1[parent_index];
+                                    if (dt > 50){
+                                        ++counts[file];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Print the results
+        printf("%16s %5s %5s %5s %5s %5s %5s\n","Filename","int", "er", "mu in", "er", "acc %%", "er");
+        for(unsigned int file = 0; file < n_files; ++file) {
+            const float count    = static_cast<float>(counts[file]);
+            const float count_er = sqrt(count);
+            const float count_frac_er = count_er/count;
+
+            const float init     = static_cast<float>(init_muons[file]);
+            const float init_er  = sqrt(init);
+            const float init_frac_er = init_er/init;
+
+            const float acc = 100.0*count/init;
+            const float acc_er = acc * sqrt(count_frac_er*count_frac_er + init_frac_er*init_frac_er);
+
+            printf ("%16s %5i %5.1f %5i %5.1f %5.1f %5.1f\n",file_roots[file].Data(), 
+                    counts[file], count_er, init_muons[file], init_er, acc, acc_er);
+        }
+    }
+
+    void set_addresses(TTree* tree, in_branch& branch) {
+        // Load the branch for the TTree
+        tree->SetBranchAddress("nhit",&branch.n_hits);
+        tree->SetBranchAddress("trkid",&branch.id);
+        tree->SetBranchAddress("pdgid", &branch.pdgid);
+        tree->SetBranchAddress("counter", &branch.counter);
+        tree->SetBranchAddress("parentid", &branch.parentid);
+        tree->SetBranchAddress("first_step", &branch.first_step);
+        tree->SetBranchAddress("tof", &branch.tof);
+    }
+
+    int get_index(const int* array, const int length, const int target) {
+        for(int index = 0; index < length; ++index) {
+            if (array[index] == target) {
+                return index;
+            }
+        }
+        return -1;
+    }
+\end{minted}
+
+% section acceptance (end)
 \bibliographystyle{plain}
 \bibliography{}
 \end{document}
