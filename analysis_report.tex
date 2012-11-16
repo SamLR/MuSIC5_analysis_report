@@ -275,7 +275,33 @@ It is worth noting that given the above definition and method the acceptance cha
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fitting And Integration} % (fold)
 \label{sec:fitting_and_integration}
+Once both the real and simulated data has been processed and put into histograms they can be treated identically. In order measure the number of decays the histograms are fitted with the function 
+\begin{align}
+    P(signal) &= N_{b} + N_{f}e^{-t / \tau_{f}} + N_{c} e^{-t / \tau_{c}} \label{equ:fit}
+\end{align}
+Where $N_{b}$ is a flat modelling of the background; $N_{f}$ and $\tau_{f}$ are the contribution of the free muon part and the free muon lifetime respectively; and $N_{c}$ and $\tau_{c}$ are the muonic-copper contribution and lifetime. Once the histogram has been fitted with equation~\ref{equ:fit} integrating either exponential portion of it and dividing by the bin width gives the number of muon decays corresponding to that mode. Similarly the total number of muons is given by the sum of the two integrals:
+\begin{align}
+    N_{\mu} &= \frac{1}{B} \int_{l}^{u}\left(N_{f}e^{-t / \tau_{f}} + N_{c} e^{-t / \tau_{c}} \right) \label{equ:sum_exp_parts}
+\end{align}
+where $N_{\mu}$ is the total number of muon decays in the histogram and $l$ and $u$ are the lower and upper bounds of the fit respectively. 
 
+\subsection{The implementation} % (fold)
+\label{sub:the_implementation}
+The implementation of the above algorithm is done using pyROOT \ref{pyROOT REF} which is a python wrapper for ROOT \ref{ROOT REF AGAIN}. Python is a preferable language to C++ for complex analysis as it is generally less verbose (allowing more rapid development and fewer bugs \ref{SNOBBY REF TO BUGS PER LINE}) as well as incorporating more powerful data structures (such as dictionaries) into the core language. Being a loosely typed language python can handle mixed-type objects which means that all the data for run can be kept in a single structure.
+
+There are 8 parameters that need to be set before the fit can proceed these are:
+\begin{enumerate}
+    \item Histogram bin width
+    \item Fit lower bound
+    \item Fit higher bound
+    \item Initial value for $N_{b}$
+    \item Initial value for $N_{c}$
+    \item Initial value for $N_{f}$
+    \item Initial value for $\tau_{c}$
+    \item Initial value for $\tau_{f}$
+\end{enumerate}
+Obviously these fall into two broad groups: fit settings (the bin width, upper and lower bounds) and the initial parameter values (the remaining). 
+% subsection the_implementation (end)
 % section fitting_and_integration (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Muon Yield} % (fold)
