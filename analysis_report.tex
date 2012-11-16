@@ -11,19 +11,15 @@
 
 % More symbols
 \usepackage{amsmath}
+% even more symbols (mainly the lesssim)
+% NB! usepackage is case sensitive
+\usepackage{MnSymbol}
 
 % Allow merged rows/colums in tables
 \usepackage{multirow}
 
 % Package for including code in the document
 \usepackage{minted}
-% \usepackage{listings}
-% \usepackage{color}
-% % make sure that code listings wrap to the page reasonably nicely
-% % gobble removes first 4 characters, allows indentation for source readability
-% \lstset{breakindent=40pt, breaklines=true, gobble=4, captionpos=b}
-% % Apparently preloading lstlangauages speeds things up
-% \lstloadlanguages{C,C++,Bash}
 
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
@@ -60,7 +56,7 @@
 
 
 \begin{abstract}
-	The \nth{5} MuSIC beam-time (\nth{18} to the \nthTwo{22}{nd} June 2012) was intended to test the momentum distribution of the muons beam. Here we will discuss the strategy employed to analyse the data and the problems encountered.
+    The \nth{5} MuSIC beam-time (\nth{18} to the \nthTwo{22}{nd} June 2012) was intended to test the momentum distribution of the muons beam. Here we will discuss the strategy employed to analyse the data and the problems encountered.
 \end{abstract}
 
 \section{Introduction} % (fold)
@@ -68,10 +64,10 @@
 The analysis of the \nth{5}~MuSIC beam time splits into 5~logical sub-algorithms called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Acceptance' (Section~\ref{sec:acceptance}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Acceptance' section covers the calculation of the detector acceptance based on simulated data. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}. A brief overview of the experimental set up is given in section~\ref{sec:experimental_set_up}.
 
 \begin{figure}[htbp]
-	\centering
-		\includegraphics[height=0.49\textheight]{image/Analysis_flow_diagram.png}
-	\caption{Flow diagram of the analysis' logic}
-	\label{fig:analysis_flow_diagrm}
+    \centering
+        \includegraphics[height=0.49\textheight]{image/Analysis_flow_diagram.png}
+    \caption{Flow diagram of the analysis' logic}
+    \label{fig:analysis_flow_diagrm}
 \end{figure}
 % section introduction (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,30 +79,30 @@ To measure the momentum distribution of the muon beam two separate problems had 
 \label{sub:detector}
 The detector consisted of an aluminium degrader who's thickness could be varied to select different momentum ranges, a thin (1~mm) upstream counter and a thicker (3.5~mm) downstream counter on either side of a 0.5~mm copper stopping target. A schematic of the detector can be seen in figure~\ref{fig:setup}. Based on simulation (section~\ref{sec:simulated_data}) we can predict the mean momentum of muons that decay for different degrader thicknesses, the momentum distributions can be seen in figure~\ref{fig:stopped_muon_mom} with the mean momentums given in table~\ref{tab:stopped_muon_mom}.
 \begin{figure}[htbp]
-	\centering
-		\includegraphics[scale=0.5]{image/Detector_setup.png}
-	\caption{Experimental set up of the detector for MuSIC~5 (not to scale)}
-	\label{fig:setup}
+    \centering
+        \includegraphics[scale=0.5]{image/Detector_setup.png}
+    \caption{Experimental set up of the detector for MuSIC~5 (not to scale)}
+    \label{fig:setup}
 \end{figure}  
 \begin{figure}[htbp]
-	\centering
-		\includegraphics[width=\textwidth]{image/stopped_muon_momentum.png}
-	\caption{Simulated momentum distributions for muons decaying between the up and downstream counters. 900~M initial protons were simulated with a range of aluminium degrader thicknesses.}
-	\label{fig:stopped_muon_mom}
+    \centering
+        \includegraphics[width=\textwidth]{image/stopped_muon_momentum.png}
+    \caption{Simulated momentum distributions for muons decaying between the up and downstream counters. 900~M initial protons were simulated with a range of aluminium degrader thicknesses.}
+    \label{fig:stopped_muon_mom}
 \end{figure}
 \begin{table}
-	\begin{center}
-	\begin{tabular}{r|r@{ $\pm$ }l|r@{ $\pm$ }l} % r@{ $\pm$ }l should align on \pm
-		Degrader (mm) & \multicolumn{2}{|c|}{Mean (MeV/c)} & \multicolumn{2}{|c}{RMS (MeV/c)}\\
-		\hline
-		Air 5.0       & 41.03 & 0.21 & 21.59 & 0.15 \\
-		Aluminium 0.5 & 46.68 & 0.20 & 19.84 & 0.14 \\
-		Aluminium 1.0 & 50.29 & 0.21 & 19.13 & 0.15 \\
-		Aluminium 5.0 & 65.66 & 0.22 & 16.86 & 0.16 \\
-	\end{tabular}
-	\end{center}
-	\caption{Simulated mean momentums for decaying muons. 900~M initial protons}
-	\label{tab:stopped_muon_mom}
+    \begin{center}
+    \begin{tabular}{r|r@{ $\pm$ }l|r@{ $\pm$ }l} % r@{ $\pm$ }l should align on \pm
+        Degrader (mm) & \multicolumn{2}{|c|}{Mean (MeV/c)} & \multicolumn{2}{|c}{RMS (MeV/c)}\\
+        \hline
+        Air 5.0       & 41.03 & 0.21 & 21.59 & 0.15 \\
+        Aluminium 0.5 & 46.68 & 0.20 & 19.84 & 0.14 \\
+        Aluminium 1.0 & 50.29 & 0.21 & 19.13 & 0.15 \\
+        Aluminium 5.0 & 65.66 & 0.22 & 16.86 & 0.16 \\
+    \end{tabular}
+    \end{center}
+    \caption{Simulated mean momentums for decaying muons. 900~M initial protons}
+    \label{tab:stopped_muon_mom}
 \end{table}
 
 The counters used were mylar wrapped scintillators with read-out performed by MPPCs mounted on either end of a wave length shifting fibre bounded along the long axis of the scintillator using optical cement. The signals from each pair of MPPCs are combined and amplified before being passed to the data acquisition system (DAQ) for processing.
@@ -122,52 +118,52 @@ Using the signals from the discriminator a trigger was created based on the sign
 
 The trigger, once formed, signalled the start of readout. There were 3 modules to be read out via VMEbus (VME): a charge to Digital Converter (QDC), a scaler and a Multi-hit Time to Digital Converter (MTDC) which is of primary concern for this analysis. The MTDC recorded all signals passing discrimination and not co-incident with a signal in the other counter within a 20\ms{} period following the trigger. Using a MTDC ensured that even if some beam remnant or dark event created a signal then the real signal would also be recorded and determined with background removal. The channel assignment used for the MTDC can be seen in table~\ref{tab:mtdc_ch}. To increase the accuracy of the MTDC the trigger time is recorded on a seperate channel called `TDC0'.
 \begin{table}
-	\begin{center}
-	\begin{tabular}{c|c|c}
-		Channel & Signal & Notes\\
-		\hline
-		0  & TDC0 & Time at which the trigger was formed \\
-		\hline
-		1  & U1   & \multirow{8}{*}{Upstream Counter}\\
-		2  & U2   & \\
-		3  & U3   & \\
-		4  & U4   & \\
-		5  & U5   & \\
-		6  & U6   & \\
-		7  & U7   & \\
-		8  & U8   & \\
-		\hline
-		9  & D1   & \multirow{5}{*}{Downstream counter}\\
-		10 & D2   & \\
-		11 & D3   & \\
-		12 & D4   & \\
-		13 & D5   & \\
-		\hline
-		14 & Ge1  & \multirow{2}{*}{Germanium not used in this analysis}\\
-		15 & Ge2  & \\
-	\end{tabular}
-	\end{center}
-	\caption{Channel assignment for the MTDC. QDC channel assignment follows the same scheme but has no entry for channel 0 (as TDC 0 will be one of the upstream counters by design).}
-	\label{tab:mtdc_ch}
+    \begin{center}
+    \begin{tabular}{c|c|c}
+        Channel & Signal & Notes\\
+        \hline
+        0  & TDC0 & Time at which the trigger was formed \\
+        \hline
+        1  & U1   & \multirow{8}{*}{Upstream Counter}\\
+        2  & U2   & \\
+        3  & U3   & \\
+        4  & U4   & \\
+        5  & U5   & \\
+        6  & U6   & \\
+        7  & U7   & \\
+        8  & U8   & \\
+        \hline
+        9  & D1   & \multirow{5}{*}{Downstream counter}\\
+        10 & D2   & \\
+        11 & D3   & \\
+        12 & D4   & \\
+        13 & D5   & \\
+        \hline
+        14 & Ge1  & \multirow{2}{*}{Germanium not used in this analysis}\\
+        15 & Ge2  & \\
+    \end{tabular}
+    \end{center}
+    \caption{Channel assignment for the MTDC. QDC channel assignment follows the same scheme but has no entry for channel 0 (as TDC 0 will be one of the upstream counters by design).}
+    \label{tab:mtdc_ch}
 \end{table}
 
 The scaler was used to record system diagnostics (e.g. the trigger rate). The scaler was polled regularly throughout data taking. The QDC may be used in later analysis, for example to apply more stringent energy cuts at trigger time. The QDC had the same channel assignment as the TDC but without the germanium detector (as it had its own analogue to digital converter) and TDC0 (which was a digital signal).
 \begin{table}
-	\centering
-	\begin{tabular}{c|c|l}
-		Channel & Signal & Notes\\
-		\hline
-		0 & SEC & Measure of the proton current\\
-		1 & Trigger & number of t0's\\
-		2 & U and $\overline{\text{D}}$ & count of potential triggers\\
-		3 & U & Upstream only\\
-		4 & D & Downstream only\\
-		5 & Scint & -\\
-		6 & unused & -\\
-		7 & clk & Record of time passed\\
-	\end{tabular}
-	\caption{Table of scaler channels and their designation}
-	\label{tab:scaler_chs}
+    \centering
+    \begin{tabular}{c|c|l}
+        Channel & Signal & Notes\\
+        \hline
+        0 & SEC & Measure of the proton current\\
+        1 & Trigger & number of t0's\\
+        2 & U and $\overline{\text{D}}$ & count of potential triggers\\
+        3 & U & Upstream only\\
+        4 & D & Downstream only\\
+        5 & Scint & -\\
+        6 & unused & -\\
+        7 & clk & Record of time passed\\
+    \end{tabular}
+    \caption{Table of scaler channels and their designation}
+    \label{tab:scaler_chs}
 \end{table}
 
 % subsection data_acquisition (end)
@@ -192,20 +188,20 @@ Each tree contained a branch per module being read, the trigger tree also had al
 The first raw data from MIDAS for the MTDC and QDC are serialised and mangled with the channel number this means that they require processing before the real values can be extracted. Below are brief summaries of the algorithms used to de-serialise the MTDC data (listing~\ref{lst:mtdc_algo}), for full listings see appendix~\ref{app:deserialisation}.
 %
 \begin{listing}[htbp]
-	\begin{minted}[gobble=4]{c++}
+    \begin{minted}[gobble=4]{c++}
     tdc_value      =  raw_val & 0x001f ffff
     tdc_channel    = (raw_val & 0x03e0 0000) >> 21
     tdc_valid_read = (raw_val & 0xf800 0000) == 0x0
-	\end{minted}
-	\caption{Method for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} data}
-	\label{lst:mtdc_algo}
+    \end{minted}
+    \caption{Method for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} data}
+    \label{lst:mtdc_algo}
 \end{listing}
 % subsection de_serialisation (end)
 \subsection{Calibration} % (fold)
 \label{sub:calibration}
 The MTDC has a stated least significant bit resolution of $\sim$25~ps with 21 bit of data, this gives a maximum range of 52\ms{}. Conversion from the stored value to real, trigger aligned, time is done using the formula:
 \begin{align}\label{equ:tdc_calibration}
-	t'   &= \frac{1.025}{40}(t - TDC0)
+    t'   &= \frac{1.025}{40}(t - TDC0)
 \end{align}
 where $t'$ is the calibrated time, $t$ is the de-serialised MTDC value and $TDC0$ is the de-serialised trigger time. The fraction is the number of MTDC bins per ns.
 % subsection calibration (end)
@@ -232,23 +228,49 @@ Simulation of the bulk of the detector (the pion capture solenoid and muon trans
 % subsection g4bl_particle_production (end)
 \subsection{Geant4 Detector Simulation} % (fold)
 \label{sub:geant4_detector_simulation}
-As G4BL `does not simulate the performance of real-world detectors' \ref{G4BL QUOTE REF} a custom simulation was written using the Geant4 framework. This simulated the detector as 4 discrete volumes: the degrader, the stopping target and the two counters. The particle distribution from G4BL was used as primary particles. The magnetic field supplied by Toshiba was also simulated.
+As G4BL `does not simulate the performance of real-world detectors' \ref{G4BL QUOTE REF} a custom simulation was written using the Geant4 framework. This simulated the detector as 4 discrete volumes: the degrader, the stopping target and the two counters all embedded within a single world volume. The particle distribution from G4BL was used as primary particles. The magnetic field was simulated using the field-map supplied by Toshiba.
 
-The simulation allowed variation of the degrader and stopping target material as well as their thickness, their width and height were set to match those used in the real experiment. The counters were simulated as 2 large scintillators whose dimensions matched those of the two arrays used in the experiment.
+The simulation allowed variation of the degrader and stopping target material as well as their thickness, their width and height were set to match those used in the real experiment. The counters were simulated as 2 large scintillators whose dimensions matched those of the two arrays used in the experiment. For full listing on the simulation of the geometry see appendix~\ref{appsub:detector_geometry}.
 
-Readout from the simulation was done via step actions which, if the particle track was found to be within one of the 4 volumes, would record the relevant information (momentum, position, particle type, track ID, parent ID, process, whether it was the first or last step in the volume) in a root file which also recorded a copy of the primary particle from G4BL for each event.
+Readout from the simulation was done by overloading the default SteppingAction. The SteppingAction is called for every step in a particles's track it was overloaded so that if the particle was found to be within one of the 4 volumes the relevant information would be recorded (see appendix~\ref{appsub:stepping_action}). Results were recorded in root files along with a copy of the primary particle information from G4BL. 
 
 Control of the simulation was exerted using macros and command line arguments. The macros for a set of simulations (e.g. simulating the 4 degraders used in the experiment) were generated via bash scripts that made the set the appropriate flags as well as calling the simulation with the correct arguments.
 % subsection geant4_detector_simulation (end)
 \subsection{Digitisation \& histogramming} % (fold)
 \label{sub:digitisation_histogramming}
+Once the detector simulation was complete the data from it had to be ``digitised'' and histogrammed (the last two stages of the `simulated data' process) so as to be in the same format as the real data. This was done by making cuts on the data that mimicked those imposed by the DAQ. 
 
+Using ROOT (`a data analysis framework' \ref{ROOT REF PLEASE!}) two cuts were applied to the simulated data. The first was that only charged particles could be selected (muons, electrons, pions and protons). The second cut applied was that the particle's parent had to have been seen in the upstream counter and it had to be seen in the downstream counter. 
+
+Particles that passed the two cuts had the difference in their times at the up and downstream counters calculated and added to the output histogram. The entire digitisation macro can be found in appendix~\ref{appsub:digitisation_macro}.
 % subsection digitisation_histogramming (end)
 % section simulated_data (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acceptance} % (fold)
 \label{sec:acceptance}
+To calculate the acceptance the initial number of initial number of muons are compared to those that would actually be recorded. This is done by counting the number of muons in simulated G4BL output (section~\ref{sub:g4bl_particle_production}) and then using a macro similar to that used to digitise the simulation output (section~\ref{sub:digitisation_histogramming}).
 
+The primary changes in the macro are that the cuts used to select the particles that are saved are more stringent. Rather than any possible parent particle in the upstream detector only muons are selected. Similarly in the downstream detector only electrons who have a parent muon are selected.
+
+The acceptance is then the ratio of muon/electron pairs to the initial number of muons:
+\begin{align}
+    \text{Acceptance} &= \frac{\text{Decay muons}}{\text{Initial Muons}} \label{equ:acceptance}
+\end{align}
+It is worth noting that given the above definition and method the acceptance changes due to the thickness and type of degrader used. Obviously for a degrader that removes the majority of the muons from the beam will have a smaller acceptance as a smaller fraction of the beam will remain to be detected. The results of the acceptance calculations are given in table~\ref{tab:acceptance}
+\begin{table}
+    \begin{center}
+    \begin{tabular}{c| r@{ $\pm$ }l | r@{ $\pm$ }l | r@{ $\pm$ }l }
+        Degrader (mm) & \multicolumn{2}{|c}{Decay Muons} & \multicolumn{2}{|c}{Initial Muons} & \multicolumn{2}{|c}{Acceptance}\\
+        \hline
+        Air 5.0       &   &   &   &   &   &   \\
+        Aluminium 0.5 &   &   &   &   &   &   \\
+        Aluminium 1.0 &   &   &   &   &   &   \\
+        Aluminium 5.0 &   &   &   &   &   &   \\
+    \end{tabular}
+    \end{center}
+    \caption{Table of the variance of acceptance with degrader thickness}
+    \label{tab:acceptance}
+\end{table}
 % section acceptance (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fitting And Integration} % (fold)
@@ -261,12 +283,15 @@ Control of the simulation was exerted using macros and command line arguments. T
 
 % section muon_yield (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-\section{De-serialisation code} % (fold)
+\section{De-serialisation} % (fold)
 \label{app:deserialisation}
+%
 These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC DATA SHEET} (MTDC) and CAEN V792N (QDC) \ref{QDC data sheet} data. They are extracts from the `midus file' object, written in C++.
-% \begin{listing}[htbp]
-	\begin{minted}[gobble=4, linenos=True, stepnumber=5]{c++}
+%
+\begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
     // Functions used for de-serialising CAEN V1290N MTDC.
     inline int midus_file::get_tdc_val(const int index) const {
     // Mask the data to get the recorded value from the MTDC branch at index
@@ -292,9 +317,9 @@ These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC D
     // Functions used for de-serialising CAEN V792N QDC.
     inline int midus_file::get_qdc_val(int const index) const {
     // Mask the data to get the QDC value from the branch at index
-    	unsigned int const data_mask = 0x00000fff;
-    	unsigned int const val = static_cast<unsigned int>(branches_m[qdc_i].data[index]);
-    	return static_cast<int>(val & data_mask); 
+        unsigned int const data_mask = 0x00000fff;
+        unsigned int const val = static_cast<unsigned int>(branches_m[qdc_i].data[index]);
+        return static_cast<int>(val & data_mask); 
     }
     
     inline int midus_file::get_qdc_ch(const int index) const {
@@ -303,6 +328,9 @@ These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC D
         return static_cast<int>((val & channel_mask) >> 17);
     }
     
+    
+    
+    
     inline bool midus_file::is_good_qdc_measure(const int index) const {
     // Check for over/under flow in the value
         unsigned int const underflow_mask = 0x00002000;
@@ -310,10 +338,488 @@ These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC D
         unsigned int const val = static_cast<unsigned int>(branches_m[tdc_i].data[index]);
         return !((underflow_mask & val) || (overflow_mask & val));
     }
-    \end{minted}
-% \end{listing}
-
+\end{minted}
 % section tdc_deserialisation (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Detector simulation} % (fold)
+\label{app:detector_simulation}
+\subsection{Detector Geometry} % (fold)
+\label{appsub:detector_geometry}
+The C++ code used in the Geant4 required `Detector Constructor'. It creates a series of volumes that represent the components of the detector. Each volume has a placement, physical geometry and material properties.
+ 
+\begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
+    void DetectorConstruction::DefineMaterials() {
+        // Tell G4 which elements, compounds and mixtures are going to be used
+        // and what their properties and definitions are. 
+        
+        G4String symbol;        
+        G4double a, z, density, fractionmass; 
+        G4int ncomponents, natoms;
+        
+        // Elements for use in compounds/mixtures
+        G4Element* H  = new G4Element("Hydrogen",symbol="H" , z= 1., a= 1.01*g/mole);
+        G4Element* C  = new G4Element("Carbon"  ,symbol="C" , z= 6., a= 12.01*g/mole);
+        G4Element* N  = new G4Element("Nitrogen",symbol="N" , z= 7., a= 14.01*g/mole);
+        G4Element* O  = new G4Element("Oxygen"  ,symbol="O" , z= 8., a= 16.00*g/mole);
+        
+        // elements that will be used on their own.
+        Al = new G4Material("Aluminium", z=13.0, a= 26.98 *g/mole, density= 2.700*g/cm3);
+        Pb = new G4Material("Lead",      z=82.0, a= 207.19*g/mole, density= 11.35*g/cm3);
+        Mg = new G4Material("Magnesium", z=12.0, a= 24.305*g/mole, density= 1.738*g/cm3);
+        Cu = new G4Material("Copper",    z=29.0, a= 63.546*g/mole, density= 8.94 *g/cm3);
+    
+        // mixtures and compounds
+        // Scintillator, most likely Polyvinyltoluene. See pg322 of Mokhov (2001) for calculated stopping power
+        Scint = new G4Material("Scintillator", density= 1.032*g/cm3, ncomponents=2);
+        Scint->AddElement(C, natoms=9);
+        Scint->AddElement(H, natoms=10);
+        
+        // Mylar, used for wrapping the scintillators
+        Mylar = new G4Material("Mylar", density= 1.397*g/cm3, ncomponents=3);
+        Mylar->AddElement(C, natoms=10);
+        Mylar->AddElement(H, natoms= 8);
+        Mylar->AddElement(O, natoms= 4);
+    
+        // The detectors weren't in vacuum
+        Air = new G4Material("Air"  , density= 1.290*mg/cm3, ncomponents=2);
+        Air->AddElement(N, fractionmass=0.7);
+        Air->AddElement(O, fractionmass=0.3);
+    
+        // More plastics for comparison
+        Polyethylene = new G4Material("Polyethylene",density= 0.94*g/cm3, ncomponents=2);
+        Polyethylene -> AddElement(H,0.14);
+        Polyethylene -> AddElement(C,0.86);
+    
+        Polystyrene = new G4Material("Polystyrene", density= 1.03*g/cm3, 2);
+        Polystyrene->AddElement(C, 8);
+        Polystyrene->AddElement(H, 8);
+        
+        // print table
+        G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+    }
+    
+    G4ThreeVector get_global_pos(double dist_from_coil8) {
+        // Convert from centralised co-ordinates to rotated co-ordinates matching 
+        // the Toshiba field map.
+        double coil8_x = (776.3)*mm;
+        double coil8_z = (3420.1)*mm;
+        double glb_x = dist_from_coil8*sin(36.0*deg) + coil8_x;
+        double glb_z = dist_from_coil8*cos(36.0*deg) + coil8_z;
+        return G4ThreeVector(glb_x,0.0,glb_z);
+    }
+    
+    G4VPhysicalVolume* DetectorConstruction::Construct() {
+    //-------------------------------------------------------------------------
+       // Magnetic field
+       //-------------------------------------------------------------------------
+        if (f_myField) {
+            // Reload the magnetic field map every time the detector is constructed
+            delete f_myField;
+        }
+    
+        if(!f_myField) {
+        // make the field map as a combination of the dipole & solenoid fields
+            f_myField = new Field(f_fname_sol,f_fname_dip,f_dip_polarity);
+            G4FieldManager* fieldMgr
+                    = G4TransportationManager::GetTransportationManager() ->GetFieldManager();
+            fieldMgr->SetDetectorField(f_myField);
+            fieldMgr->CreateChordFinder(f_myField);
+        }
+    
+       //-------------------------------------------------------------------------
+       // Rotation Matrix
+       //-------------------------------------------------------------------------
+        G4RotationMatrix rot_36 = G4RotationMatrix();
+        rot_36.rotateY(36.0*deg);
+    
+    
+       //-------------------------------------------------------------------------
+        // Detector Geometry
+       //-------------------------------------------------------------------------
+       
+        // The world volume: this is the outer most volume of the simulation
+        // For simplicity make the world the size of the field maps
+        double world_hx = (8000/2.0)*mm; 
+        double world_hy = (8000/2.0)*mm;
+        double world_hz = (8000/2.0)*mm;
+        
+        // Create the solid geometry (in this case a simple box)
+        G4Box * solid_world = new G4Box("world",world_hx,world_hy,world_hz);
+        
+        // The `logical' volume: material, geometry, if it's a detector etc
+        f_logic_world = new G4LogicalVolume(solid_world,   // geometry of the vol
+                                            Air,           // volume's material
+                                            "world",       // volume's name
+                                            0,             // field manager ptr
+                                            0,             // sensitive detector ptr
+                                            0);            // user limits
+        
+        // Place the logical volume (in the world's case it's automatically at 
+        // the origin with no rotation)
+        f_physi_world = new G4PVPlacement(0,               // Rotation
+                                          G4ThreeVector(), // Translation
+                                          f_logic_world,   // Logical volume
+                                          "world",         // Name
+                                          0,               // Mother (always null for world)
+                                          false,           // Not used
+                                          0);              // Copy number of volume
+    
+        // offset of the upstream counter with respect to coil8 
+        // of the transport solenoid
+        double coil8_to_scint1 = 440*mm; 
+        
+        // Dimensions of both counters are the same in xy plane, only the 
+        // thickness (z) changes
+        double sci_hx = (450.0/2.0)*mm; 
+        double sci_hy = (450.0/2.0)*mm;
+        
+        // Translate the upstream counter from the origin to the end of
+        // the beam pipe
+        G4ThreeVector sci1_pos = get_global_pos(coil8_to_scint1);
+        
+        // The solid for the upstream counter
+        G4Box* solid_sci1 = new G4Box("sci1", sci_hx, sci_hy, f_scint1z/2.0);
+        // The logical volume. The counter doesn't have an associated sensitive
+        // detector as that is resolved in the SteppingAction
+        f_logic_sci1 = new G4LogicalVolume(solid_sci1,f_scint1Mat,"sci1",0,0,0);
+        // place and rotate the volume at the end of the beam pipe
+        f_physi_sci1 = new G4PVPlacement(G4Transform3D(rot_36,sci1_pos), f_logic_sci1, 
+                                         "sci1", f_logic_world,false,0);
+    
+        // Copper stopping target
+        double target_posZ = coil8_to_scint1 + (f_scint1z/2.0) + 3 + (f_targetZ/2.0); // 3 is thickness of separators
+        double target_hx = (450.0/2.0)*mm;
+        double target_hy = (450.0/2.0)*mm;
+        G4ThreeVector target_pos = get_global_pos(target_posZ);
+        G4Box* solid_target = new G4Box("target",target_hx,target_hy,f_targetZ/2.0);
+        f_logic_target = new G4LogicalVolume(solid_target,f_targetMat,"target",0,0,0);
+        f_physi_target = new G4PVPlacement(G4Transform3D(rot_36,target_pos), f_logic_target, 
+                                           "target", f_logic_world, f alse,0);
+    
+       // scintillator bar (sci2)
+       // dimensions are the same as scint 1 (other than thickness)
+        double scint2_posz = target_posZ + 3 + (f_scint2z/2.0);
+        G4ThreeVector sci2_pos = get_global_pos(scint2_posz);
+        G4Box* solid_sci2 = new G4Box("sci2", sci_hx, sci_hy, f_scint2z/2.0);
+        f_logic_sci2 = new G4LogicalVolume(solid_sci2,f_scint2Mat,"sci2",0,0,0);
+    
+        f_physi_sci2 = new G4PVPlacement(G4Transform3D(rot_36,sci2_pos), f_logic_sci2,
+                                         "sci2", f_logic_world,false,0);
+    
+        // degrader
+        // degrader is in front of scint 1
+        double degrader_posz = coil8_to_scint1 - (f_scint1z/2.0) - 3 - (f_degraderZ/2.0);
+        double degrader_hx = (450.0/2.0)*mm;
+        double degrader_hy = (450.0/2.0)*mm;
+        G4ThreeVector degrader_pos = get_global_pos(degrader_posz);
+        G4Box* solid_degrader = new G4Box("degrader",degrader_hx,degrader_hy,f_degraderZ/2.0);
+        f_logic_degrader = new G4LogicalVolume(solid_degrader,f_degraderMat,"degrader",0,0,0);
+        f_physi_degrader = new G4PVPlacement(G4Transform3D(rot_36, degrader_pos), f_logic_degrader,
+                                             "degrader", f_logic_world, false,0);
+    
+        // Set the user limits; these set a maximum step length for particles depending 
+        // on which volume they are in. In this case the distance is 0.1*z-extent
+        double scint1_limit = 0.1 * f_scint1z; // calculate the lengths
+        double scint2_limit = 0.1 * f_scint2z;
+        double st_limit = 0.1 * f_targetZ;
+        double deg_limit = 0.1 * f_degraderZ;
+        
+        // Set the limits for the upstream counter...
+        f_scint1_limit = new G4UserLimits(scint1_limit);
+        f_logic_sci1->SetUserLimits(f_scint1_limit);
+        
+        // ...the downstream counter...
+        f_scint2_limit = new G4UserLimits(scint2_limit);
+        f_logic_sci2->SetUserLimits(f_scint2_limit);
+        
+        // ... the stopping target ...
+        f_st_limit = new G4UserLimits(st_limit);
+        f_logic_target->SetUserLimits(f_st_limit);
+    
+        // ... and the degrader.
+        f_deg_limit = new G4UserLimits(deg_limit);
+        f_logic_degrader->SetUserLimits(f_deg_limit);
+    
+        // Return the world (and hence all its child volumes) to the run manager
+        return f_physi_world;
+    }
+\end{minted}
+% subsection detector_geometry (end)
+\subsection{Stepping Action} % (fold)
+\label{appsub:stepping_action}
+G4 simulates particles by stepping them through the volumes of the detector. In each step it calculates the lengths over which various events can occur (e.g. decaying or passing into another volume) which ever event has the shortest length is carried out. For each step along the particle's trajectory a user defined action (`SteppingAction') is also performed. This is what is used to generate output from the simulation. If the particle is found to be within a volume of interest (i.e. a counter, the stopping target or degrader) its details are recorded.
+\begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
+    void SteppingAction::UserSteppingAction(const G4Step * aStep) {
+        // Action to be performed every step.
+        
+        G4Track * track = aStep->GetTrack();
+        
+        // The start of the current step
+        G4StepPoint* point1 = aStep->GetPreStepPoint();
+        // The start of the next step
+        G4StepPoint* point2 = aStep->GetPostStepPoint();
+        
+        // If either pre or post point is null the particle is likely leaving the 
+        // world or in an error state
+        if (point2==NULL || point1==NULL) return;
+    
+        // We want to be able to access information on where the particle is going and where it is
+        const G4VPhysicalVolume* nextvol = point2->GetTouchableHandle()->GetVolume();
+        const G4VPhysicalVolume* thisvol = point1->GetTouchableHandle()->GetVolume();
+        
+        // if there is no next volume we're exiting the world
+        if (!nextvol) return;
+        
+        // If the first point of the next step is in a new volume then we're
+        // leaving this one
+        bool last_step  = (point2->GetStepStatus() == fGeomBoundary);
+        // If the first point of this step is at a boundary we've just entered it
+        bool first_step = (point1->GetStepStatus() == fGeomBoundary);
+        // Find out where we are
+        const G4String& volname = thisvol->GetName();
+        
+        // We want information on the particles before they interact with the detector
+        // so we select those specially by selecting those leaving the world and
+        // entering the degrader 
+        bool entering_degrader = last_step &&
+                                 (nextvol->GetName() == "degrader") &&
+                                 (volname == "world");
+
+        // Codify the volume names
+        int acounter = 0; 
+        if     ( volname == "sci1" )     { acounter = 1; } 
+        else if( volname == "target" )   { acounter = 2; } 
+        else if( volname == "sci2" )     { acounter = 3; }
+        else if( volname == "degrader" ) { acounter = 4; }
+        else if( entering_degrader )     { acounter = 5; }
+        else return; // not in a volume we're interested in
+        
+        // Get all the information that we want to store:
+        // The parent particle's track ID (0 if this is the primary particle)
+        int parentid = track->GetParentID();
+        // This particle's track ID
+        int trkid = track->GetTrackID();
+        // What sort of particle is this
+        int pdgid  = track->GetDefinition()->GetPDGEncoding();
+        // Ek
+        double kinetic = track->GetKineticEnergy()/MeV;
+        // How long since the primary particle was produced in simulation time
+        double tof = track->GetGlobalTime()/ns;
+        // Where is the particle
+        double x = track->GetPosition().x()/mm;
+        double y = track->GetPosition().y()/mm;
+        double z = track->GetPosition().z()/mm;
+        // What is it's momentum
+        double px = track->GetMomentum().x()/MeV;
+        double py = track->GetMomentum().y()/MeV;
+        double pz = track->GetMomentum().z()/MeV;
+        // Sum of energy lost due to continuous processes and energy lost due to
+        // secondary particles that were not simulated due to being below the cut
+        // threshold (i.e. not including secondaries actually simulated)
+        double edep = aStep->GetTotalEnergyDeposit()/MeV;
+        // Get the name of the process that is currently limiting the step length
+        const G4String& procname = point2->GetProcessDefinedStep()->GetProcessName();
+        
+        // Store the information
+        set_hit(first_step, last_step, acounter, procname.c_str(), trkid, parentid, 
+                pdgid, x,y,z, px,py,pz, kinetic, edep, tof);
+    }
+\end{minted}
+
+% subsection stepping_action (end)
+\subsection{Digitisation macro} % (fold)
+\label{appsub:digitisation_macro}
+This is the macro used to process the files created by the simulation. It can be compiled and run using ROOT.
+\begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
+    
+    #include "TFile.h"
+    #include "TTree.h"
+    #include "TH1.h"
+    #include "TH1F.h"
+
+    struct in_branch {
+        int n_hits;
+        int id[500];
+        int pdgid[500];
+        int counter[500];
+        int parentid[500];
+        bool first_step[500];
+        double tof[500];
+    };
+
+    void set_addresses(TTree* tree, in_branch& branch);
+    TH1F* make_hist(const TString file_root);
+    int get_index(const int* array, const int length, const int target);
+    bool is_charged(const int pdgid);
+
+    void make_inclusive_dt_hists() {
+        
+        // The G4 simulation makes a set of files for the different degraders
+        // all of these will be combined into a single file for analysis
+        const int n_files = 4;
+        // The degraders
+        const TString file_roots [n_files] = { "Air_5mm",
+            "Aluminium_0.5mm",
+            "Aluminium_1mm",
+            "Aluminium_5mm" };
+
+        // Where the simulation root files are saved
+        const TString prefix = "~/path/to/root/folder";
+        const TString suffix = ".root";
+        
+        // create the out file in the local dir
+        TFile* out_file = new TFile("out.root", "RECREATE");
+
+        // An array of histogram pointers, one pointer for each input file (i.e. degrader)
+        TH1F* hists [n_files];
+
+        // Loop over all the files
+        for(unsigned int file = 0; file < n_files; ++file) {
+            // Generate the file name, open it and get the data tree
+            TString file_name = prefix + file_roots[file] + suffix;
+            TFile* in_file = new TFile (file_name, "READ");
+            TTree* in_tree = (TTree*) in_file->Get("t");
+            
+            // Create the branch to load data into 
+            in_branch branch; 
+            set_addresses(in_tree, branch);
+            
+            // make sure the histograms are saved in the out file
+            out_file->cd();
+            hists[file] = make_hist(file_roots[file]);
+            
+            // loop over all the entries
+            const int n_entries = in_tree->GetEntries();
+            for(int entry = 0; entry < n_entries; ++entry) {
+                // Load the entry into the branch
+                in_tree->GetEntry(entry);
+                
+                // Create arrays for storing the parent/child information in order
+                // to avoid double counting as well as save information between
+                // hits
+                const int max_index = 500;
+                int parent_ids_scint1 [max_index];
+                int chid_ids [max_index];
+                double time_at_scint1[max_index]; 
+                // index bounds; don't want to loop over 500 zeros
+                int n_seen_parent = 0;  
+                int n_seen_child = 0;
+
+                // Set everything to -1 to make sure we don't get dud data
+                for(int i = 0; i < max_index; ++i) {
+                    parent_ids_scint1[i]       = -1;
+                    chid_ids[i]        = -1;
+                    time_at_scint1[i] = -1.0;
+                }
+                
+                // Loop over all the hits in this entry
+                for(int hit = 0; hit < branch.n_hits; ++hit) {
+                    // The general algorithm:
+                    // is it a charged particle in the upstream counter
+                    //   Yes: is it the first step?
+                    //      Yes: add id to appropriate array
+                    //           record time
+                    //           ++ n_seen_parent
+                    // is it a charged particle in the downstream counter
+                    //   Yes: is it the first step?
+                    //      Yes: is it something's child?
+                    //          Yes: has its parent been seen in the upstream counter?
+                    //              Yes: plot dt
+                    
+                    const int pid = branch.pdgid[hit];
+                    // ignore un-charged particles
+                    if (not is_charged(pid)) continue;
+
+                    const int counter = branch.counter[hit];
+                    const int id = branch.id[hit];
+                    const bool first_step = branch.first_step[hit];
+                    
+                    // Upstream counter?
+                    if (counter == 1 && first_step) {
+                        // Check we've not already seen this particle
+                        const int index = get_index(parent_ids_scint1,
+                                                    n_seen_parent, id);
+                        if (index == -1) {
+                            // new muon, log it!
+                            parent_ids_scint1[n_seen_parent] = id;
+                            time_at_scint1[n_seen_parent++] = branch.tof[hit];
+                        } 
+                    }
+                    
+                    if (counter == 3 && first_step && (id != 0)) {
+                        // first step for a child particle in downstream counter
+                        // have we seen it already?
+                        const int index = get_index(chid_ids, n_seen_child, id);
+                        if (index == -1) {
+                            // New child particle!
+                            // Add it to the list of seen particles
+                            chid_ids[n_seen_child++] = id; 
+                            const int parent_index = get_index( parent_ids_scint1,
+                                                 n_seen_parent,
+                                                 branch.parentid[hit]);
+                            // If we've seen its parent....
+                            if (parent_index != -1) {
+                                // ... Histogram the time.
+                                const double dt = branch.tof[hit] 
+                                                  - time_at_scint1[parent_index];
+                                hists[file]->Fill(dt);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Save it all
+        out_file->Write();
+    }
+    
+
+    void set_addresses(TTree* tree, in_branch& branch) {
+        // Tell ROOT where to load the data from the TTree
+        tree->SetBranchAddress("nhit",&branch.n_hits);
+        tree->SetBranchAddress("trkid",&branch.id);
+        tree->SetBranchAddress("pdgid", &branch.pdgid);
+        tree->SetBranchAddress("counter", &branch.counter);
+        tree->SetBranchAddress("parentid", &branch.parentid);
+        tree->SetBranchAddress("first_step", &branch.first_step);
+        tree->SetBranchAddress("tof", &branch.tof);
+    }
+
+    TH1F* make_hist(const TString file_root) {
+        // make a nice histogram with a unique name & titled axises.
+        TString name = "parent-daughter_dts_for_"+file_root;
+        TH1F* res = new TH1F(name,name, 20000, 1, 20001);
+        res->GetXaxis()->SetTitle("Delta time (ns)");
+        res->GetYaxis()->SetTitle("Count");
+        return res;
+    }
+
+    int get_index(const int* array, const int length, const int target) {
+        // Loop over an array and find the index of the item that matches 
+        // target, otherwise return -1
+        for(int index = 0; index < length; ++index) {
+            if (array[index] == target) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    bool is_charged(const int pdgid) {
+        // Is the PDGid that of a charged particle?
+        if (pdgid == -211 || pdgid == 211 || // pion
+            pdgid ==  -13 || pdgid == 13  || // muon
+            pdgid ==  -11 || pdgid == 11  || // electron
+            pdgid == 2212) {                 // proton
+            return true;
+        } else {
+            return false;
+        }
+    }
+\end{minted}
+% subsection digitisation_macro (end)
+% section detector_simulation (end)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
 \bibliography{}
 \end{document}

@@ -6,3 +6,7 @@ analysis_report.mtc0
 analysis_report.pdf
 analysis_report.synctex.gz
 *.png
+*.mtc
+*.mtc0
+*.pyg
+.DS_Store
