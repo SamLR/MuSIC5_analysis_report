@@ -63,7 +63,7 @@
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
-The analysis of the \nth{5}~MuSIC beam time splits into 5~logical stages called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Acceptance' (Section~\ref{sec:acceptance}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Acceptance' section covers the calculation of the detector acceptance based on simulated data. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}. A brief overview of the experimental set up is given in section~\ref{sec:experimental_set_up}.
+The analysis of the \nth{5}~MuSIC beam time splits into 5~logical stages called here: `Run Data' (Section~\ref{sec:run_data}), `Simulated Data' (Section~\ref{sec:simulated_data}), `Secondary Calculations' (Section~\ref{sec:secondary_calculations}), `Fitting and Integration' (Section~\ref{sec:fitting_and_integration}) and `Muon Yield' (Section~\ref{sec:muon_yield}). The `Run' and `Simulated Data' algorithms cover the processing of the initial data to such a point as they can be treated identically. The `Secondary Calculations' section covers the calculation of the detector acceptance and dead time. The `Fitting and Integration' and `Muon Yield' sections cover the final stages of the algorithm in calculating the number of muon decays and ultimately the muon yield of the run. The overall flow can be seen in Figure~\ref{fig:analysis_flow_diagrm}. A brief overview of the experimental set up is given in section~\ref{sec:experimental_set_up}.
 
 \begin{figure}[htbp]
     \centering
@@ -179,9 +179,9 @@ These processes are split across 4 programs: MIDAS; mu\_analysis and mid2root\_c
 
 \subsection{Data from MIDAS} % (fold)
 \label{sub:data_from_midas}
-MIDAS is `a general purpose data acquisition system for small and medium scale experiments' \ref{MIDAS REF PLEASE!} and is the primary interface to the DAQ via VME. 
+MIDAS is `a general purpose data acquisition system for small and medium scale experiments'~\cite{ritt2012midas} and is the primary interface to the DAQ via VME. 
 
-MIDAS stored the raw data from each run as a single file either in its own binary xml format (.mid files) or in ROOT \ref{ROOT REF} format (.root). Data was read from the VME crate in two asynchronous modes: `Trigger' and `Scaler' each corresponded to a separate tree structure in the resulting file. The majority of the time the system operated in trigger-mode: whenever a trigger was formed the controlling PC was informed and once the data had been gathered readout of the MTDC and QDC occurred via the VME. Scaler mode occurred at regular intervals and consisted of reading the diagnostics data gathered by the scaler, this did not reset the module which continued to accumulate data. 
+MIDAS stored the raw data from each run as a single file either in its own binary xml format (.mid files) or in ROOT~\cite{Brun199781} format (.root). Data was read from the VME crate in two asynchronous modes: `Trigger' and `Scaler' each corresponded to a separate tree structure in the resulting file. The majority of the time the system operated in trigger-mode: whenever a trigger was formed the controlling PC was informed and once the data had been gathered readout of the MTDC and QDC occurred via the VME. Scaler mode occurred at regular intervals and consisted of reading the diagnostics data gathered by the scaler, this did not reset the module which continued to accumulate data. 
 
 Each tree contained a branch per module being read, the trigger tree also had also branch for errors (named `ERR'). The branches all had the same structure: an integer that recorded the number of values read and an array of integers containing those values. For the scaler and QDC modules the number of values read out was the same for every trigger as both had a fixed number of channels and took one measurement on each. The MTDC had a variable number of values to read out as it could record multiple hits on each channel.
 % subsubsection data_from_midas (end)
@@ -195,7 +195,7 @@ The first raw data from MIDAS for the MTDC and QDC were serialised and mangled w
     tdc_channel    = (raw_val & 0x03e0 0000) >> 21
     tdc_valid_read = (raw_val & 0xf800 0000) == 0x0
     \end{minted}
-    \caption{Method for de-serialising CAEN V1290N \ref{REF FOR THE DATA SHEET} data}
+    \caption{Method for de-serialising CAEN V1290N~\cite{CAENV1290N} data}
     \label{lst:mtdc_algo}
 \end{listing}
 % subsection de_serialisation (end)
@@ -221,7 +221,7 @@ Once the data has been restructured it is trivial to create a histogram of the T
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Simulated Data} % (fold)
 \label{sec:simulated_data}
-To save simulation time and ensure accuracy three separate programs were created to simulate the beamline: the initial protons and beam transport system were simulated in G4Beamline (G4BL) \ref{REF G4BL}; the detector was simulated in a custom program implemented with Geant4 \ref{REF G4}; and the digitisation and histogramming were done in ROOT.
+To save simulation time and ensure accuracy three separate programs were created to simulate the beamline: the initial protons and beam transport system were simulated in G4Beamline~\cite{G4BL} (G4BL); the detector was simulated in a custom program implemented with Geant4~\cite{Agostinelli2003250}; and the digitisation and histogramming were done in ROOT.
 
 \subsection{G4Beamline Particle Production} % (fold)
 \label{sub:g4bl_particle_production}
@@ -232,7 +232,7 @@ Using a single simulation for the majority of the beam meant that the same parti
 % subsection g4bl_particle_production (end)
 \subsection{Geant4 Detector Simulation} % (fold)
 \label{sub:geant4_detector_simulation}
-As G4BL `does not simulate the performance of real-world detectors' \ref{G4BL QUOTE REF} a custom simulation was written using the Geant4 framework. This simulated the detector as 4 discrete volumes: the degrader, the stopping target and the two counters all embedded within a single world volume. The particle distribution from G4BL was used as primary particles. The magnetic field was simulated using the field-map supplied by Toshiba.
+As G4BL `does not simulate the performance of real-world detectors'~\cite{G4BL} a custom simulation was written using the Geant4 framework. This simulated the detector as 4 discrete volumes: the degrader, the stopping target and the two counters all embedded within a single world volume. The particle distribution from G4BL was used as primary particles. The magnetic field was simulated using the field-map supplied by Toshiba.
 
 The simulation allowed variation of the degrader and stopping target material as well as their thickness. The width and height of the counters, stopping target and degrader were set to match those used in the real experiment. The counters were simulated as 2 large scintillators rather than individual strips for the sake of simplicity. For full listing on the simulation of the geometry see appendix~\ref{appsub:detector_geometry}.
 
@@ -244,14 +244,17 @@ Control of the simulation was exerted using macros and command line arguments. T
 \label{sub:digitisation_histogramming}
 Once the detector simulation was complete the data from it had to be ``digitised'' and histogrammed (the last two stages of the `simulated data' process) so as to be in the same format as the real data. This was done by making cuts on the data that mimicked those imposed by the DAQ. 
 
-Using ROOT (`a data analysis framework' \ref{ROOT REF PLEASE!}) two cuts were applied to the simulated data. The first was that only charged particles could be selected (muons, electrons, pions and protons). The second cut applied was that the particle's parent had to have been seen in the upstream counter and it had to be seen in the downstream counter. 
+Using ROOT (`a data analysis framework'~\cite{Brun199781}) two cuts were applied to the simulated data. The first was that only charged particles could be selected (muons, electrons, pions and protons). The second cut applied was that the particle's parent had to have been seen in the upstream counter and it had to be seen in the downstream counter. 
 
 Particles that passed the two cuts had the difference in their times at the up and downstream counters calculated and added to the output histogram. The entire digitisation macro can be found in appendix~\ref{appsub:digitisation_macro}. Unlike the real data only one histogram per `run' was created; all were saved to the same root file.
 % subsection digitisation_histogramming (end)
 % section simulated_data (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Acceptance} % (fold)
-\label{sec:acceptance}
+\section{Secondary calculations} % (fold)
+\label{sec:secondary_calculations}
+There are two secondary calculations that need to be performed to calculate the muon yield. These are the acceptance, the fraction of the total beam we can expect to detect, and the dead time, a measure of how much of the time the detector is unable to process new data due to being busy.
+\subsection{Acceptance} % (fold)
+\label{sub:acceptance}
 To calculate the acceptance the ratio of initial muons to muons that passed a `trigger' cut was calculated. This is done by counting the number of muons in simulated G4BL output (section~\ref{sub:g4bl_particle_production}) and then using a macro similar to that used to digitise the simulation output (section~\ref{sub:digitisation_histogramming}) to mimic the triggering process.
 
 The main difference between the acceptance macro (appendix~\ref{app:acceptance}) and the digitisation macro (appendix~\ref{appsub:digitisation_macro}) were in the cuts applied to select the particles. Rather than any possible parent particle in the upstream detector only muons are selected, similarly, in the downstream detector only electrons who had a parent muon are selected.
@@ -275,7 +278,38 @@ It is worth noting that given the above definition and method the acceptance cha
     \caption{Table of the variance of acceptance with degrader thickness}
     \label{tab:acceptance}
 \end{table}
-% section acceptance (end)
+% subsection acceptance (end)
+\subsection{Dead time} % (fold)
+\label{sub:dead_time}
+The calculation of the dead time is unlike that of the acceptance as it was calculated based on the real data rather than simulation. Using the scaler it is possible to estimate how much of the time the DAQ was busy and hence what percentage of data was missed. 
+
+As was stated in section~\ref{sub:data_acquisition} the scaler was used to record diagnostics on the DAQ. To calculate the dead time only two are needed, the trigger count and the potential trigger count which can be used to calculate the dead time thus:
+\begin{align}
+    D = \frac{\text{Potential Triggers}}{\text{Good Triggers}}
+\end{align}
+Where potential triggers are considered any anti-coincidence of the up without the downstream counter and a good trigger is one in which this occurs without the system being busy. The results for are given in table~\ref{tab:dead_time}.
+\begin{table}
+    \begin{center}
+    \begin{tabular}{c|c|c|r@{ $\pm$ }l|r@{ $\pm$ }l|r@{ $\pm$ }l }
+        Run & Degrader (mm of Al) & Run time (s) &
+                              \multicolumn{2}{|c}{Good Triggers} &      
+                              \multicolumn{2}{|c}{Potential Triggers} &
+                              \multicolumn{2}{|c}{Dead time (\%)} \\
+        \hline
+        448 & 0.0 & 9221 & 9652965 & 3106 & 15678757 & 3959 & 61.6 & 11.3 \\
+        451 & 0.5 & 1001 &  767321 & 875  &  1070366 & 1034 & 71.7 & 18.3 \\
+        452 & 0.5 & 4944 & 3459886 & 1860 &  4667767 & 2160 & 74.1 & 15.7 \\
+        455 & 1.0 & 6307 & 4090246 & 2022 &  5372409 & 2317 & 76.1 & 15.8 \\
+        458 & 5.0 & 5144 & 2049077 & 1431 &  2454952 & 1566 & 83.5 & 19.0 \\
+        459 & 5.0 & 2452 &  915314 & 956  &  1077534 & 1038 & 84.9 & 21.4 \\
+    \end{tabular}
+    \end{center}
+    \caption{Dead time for each run along with the number of potential and good triggers. Run time is included to show the origin of the different counts.}
+    \label{tab:dead_time}
+\end{table}
+
+% subsection dead_time (end)
+% section secondary_calculations (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fitting And Integration} % (fold)
 \label{sec:fitting_and_integration}
@@ -296,7 +330,7 @@ where $N_{\mu}$ is the total number of muon decays in the histogram and $l$ and 
 % subsection the_theory (end)
 \subsection{The implementation} % (fold)
 \label{sub:the_implementation}
-The implementation of the above algorithm is done using pyROOT \ref{pyROOT REF} which is a python wrapper for ROOT \ref{ROOT REF AGAIN}. Python is a preferable language to C++ for complex analysis as it is generally less verbose (allowing more rapid development and fewer bugs \ref{SNOBBY REF TO BUGS PER LINE}) as well as incorporating more powerful data structures (such as dictionaries) into the core language. Being a loosely typed language python can handle mixed-type objects which means that all the data for run can be kept in a single structure. For concrete listings of each stage from figure~\ref{fig:analysis_flow_diagrm} see appendix
+The implementation of the above algorithm is done using pyROOT~\cite{lavrijsenpyroot} which is a python wrapper for ROOT~\cite{Brun199781}. Python is a preferable language to C++ for complex analysis as it is generally less verbose (allowing more rapid development and fewer bugs) as well as incorporating more powerful data structures (such as dictionaries) into the core language. Being a loosely typed language python can handle mixed-type objects which means that all the data for run can be kept in a single structure. For concrete listings of each stage from figure~\ref{fig:analysis_flow_diagrm} see appendix
 
 There are 8 parameters that need to be set before the fit can proceed these are show in table~\ref{tab:typical_fit_values} with typical initial values. These fall into two broad groups: `fit settings' which relate to the bounds on the fitting method and the `initial parameter values' which determine what values the fit uses as start points for its approximations. The fit settings primarily affect how good a fit is achieved whilst the initial parameter values are mainly chosen to ensure that there are no degeneracies in the fit. 
 
@@ -319,7 +353,7 @@ There are 8 parameters that need to be set before the fit can proceed these are 
 		    \end{tabular}
 		    \caption{Typical values for the fit parameters. \textbf{NB} that the copper value is often constrained as it is well know, the free muon lifetime is not well known as it is dependant on the combination of the muon lifetime in air, scintillator and as a free particle.}
 		    \begin{tablenotes}
-		        \item [a] The canonical free muon lifetime is 2.1969811$\pm$0.0000022\ms~\ref{PDG REF}, see text for why this value is not fixed.
+		        \item [a] The canonical free muon lifetime is 2.1969811$\pm$0.0000022\ms~\cite{Beringer2012}, see text for why this value is not fixed.
 		    \end{tablenotes}
 		    \label{tab:typical_fit_values}
 	    \end{threeparttable}
@@ -328,7 +362,7 @@ There are 8 parameters that need to be set before the fit can proceed these are 
 
 The largest changes to the fit are due to the fit settings. These determine the range that is fitted and the smoothness of the data that the fit is attempted on. The lower bound of the range probably has the largest affect on the fit. It is obvious that a large enough lower bound will utterly remove the region in which the copper component is dominant, to avoid this the minimum value of 50~ns is usually chosen. The upper bound has very little affect for any reasonable value ($>$15\ms) as that portion of the histograms is usually flat. The bin width has an important part to play as it the prime method of smoothing data. This is especially important as there is apparently a source of high frequency noise ($\sim$16~MHz) this is suspected to be due to the cyclotron setting the bin width to larger than $\sim$60~ns removes the affect of this.
 
-The initial fit parameters were set by `eyeball' to approximations of their expected value, if this were not done ROOT would set all values to 0. A reasonably large range of values was chosen to avoid degeneracies (this is especially important to make sure that each fit corresponds to its label). $\tau_{c}$ is generally fixed to a range of $\pm$1~ns about its canonical value of 163.5~ns \ref{REF FOR CU TAU} as this is a known value reasonably different compared to the other muonic lifetimes\footnote{The lifetimes for the other major materials in the detector are: Hydrogen 2194.903$\pm$0.066, Carbon 2026.3$\pm$1.5~ns, Nitrogen 1906.8$\pm$3.0~ns, Oxygen 1795.4$\pm$2~ns \ref{RETURN OF THE TAUCU REF}. Where the scintillator is assumed to be mostly carbon and hydrogen and the air mainly nitrogen and oxygen.}. It is worth noting that only the negatively charged muons can form muonic atoms and so the copper component of the fit makes a reasonable approximation to this number whilst the free component will be composed of positively and negatively charged muons.
+The initial fit parameters were set by `eyeball' to approximations of their expected value, if this were not done ROOT would set all values to 0. A reasonably large range of values was chosen to avoid degeneracies (this is especially important to make sure that each fit corresponds to its label). $\tau_{c}$ is generally fixed to a range of $\pm$1~ns about its canonical value of 163.5~\cite{PhysRevC.35.2212} as this is a known value reasonably different compared to the other muonic lifetimes\footnote{The lifetimes for the other major materials in the detector are: Hydrogen 2194.903$\pm$0.066, Carbon 2026.3$\pm$1.5~ns, Nitrogen 1906.8$\pm$3.0~ns, Oxygen 1795.4$\pm$2~ns~\cite{PhysRevC.35.2212}. Where the scintillator is assumed to be mostly carbon and hydrogen and the air mainly nitrogen and oxygen.}. It is worth noting that only the negatively charged muons can form muonic atoms and so the copper component of the fit makes a reasonable approximation to this number whilst the free component will be composed of positively and negatively charged muons.
 
 Once the histograms were fitted the fit parameters were extracted and used to create sub-functions corresponding to the individual components. Using ROOT's `Integral' and `IntegralError' functions the number of decays for each channel corresponding to each component could then be calculated. Equally summing over all the channels in a run the total number of muons for that run could be calculated.
 % subsection the_implementation (end)
@@ -365,7 +399,7 @@ The most obvious deficiency in the analysis is the lack optical processes in the
 \section{De-serialisation} % (fold)
 \label{app:deserialisation}
 %
-These are listings of the functions used to de-serialise CAEN V1290N \ref{MTDC DATA SHEET} (MTDC) and CAEN V792N (QDC) \ref{QDC data sheet} data. They are extracts from the `midus file' object, written in C++.
+These are listings of the functions used to de-serialise CAEN V1290N (MTDC)~\cite{CAENV1290N} and CAEN V792N (QDC)~\cite{CAENV792N} data. They are extracts from the `midus file' object, written in C++.
 %
 \begin{minted}[gobble=4, linenos=True, stepnumber=5, numberblanklines=False]{c++}
     // Functions used for de-serialising CAEN V1290N MTDC.
@@ -1190,5 +1224,5 @@ This is the macro used to process the files created by the simulation. It can be
 % section fitting_and_integration (end)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
-\bibliography{}
+\bibliography{report}
 \end{document}
